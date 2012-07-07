@@ -1,0 +1,82 @@
+exports.MENUITEMS_TABLE = 'menuitems';
+exports.EATACTIONS_TABLE = 'eatactions';
+exports.MENUS_TABLE = 'menus';
+exports.RECOMMENDACTIONS_TABLE = 'recommendactions';
+exports.RESTAURANTS_TABLE = 'restaurants';
+exports.USERS_TABLE = 'users';
+exports.COUPONS_TABLE = 'coupons';
+exports.FEATURES_TABLE = 'features';
+exports.FRIENDS_TABLE = 'friends';
+exports.MENUTYPE_TABLE = 'menuType';
+
+exports.COUPONS_ID = "id";
+exports.COUPONS_NAME = "name";
+exports.COUPONS_DESCRIPTION = "description";
+exports.COUPONS_IMAGE = "image";
+exports.COUPONS_CODE = "code";
+exports.COUPONS_RESTAURANTID = "restaurantId";
+
+exports.MENUITEMS_ID = "id";
+exports.MENUITEMS_MENUID = "menuId";
+exports.MENUITEMS_NAME = "name";
+exports.MENUITEMS_OBJECTTYPE = "objectType";
+exports.MENUITEMS_MENUTYPE = "menuType";
+exports.MENUITEMS_DESCRIPTION = "description";
+exports.MENUITEMS_PICTURE = "picture";
+exports.MENUITEMS_PRICE = "price";
+
+exports.MENUS_ID = "id";
+exports.MENUS_MENUNAME = "menuName";
+exports.MENUS_RESTAURANTID = "restaurantId";
+exports.MENUS_DESCRIPTION = "description";
+
+exports.RESTAURANTS_ID = "id";
+exports.RESTAURANTS_FBID = "facebookId";
+exports.RESTAURANTS_NAME = "name";
+exports.RESTAURANTS_PICTURE = "picture";
+exports.RESTAURANTS_LINK = "link";
+exports.RESTAURANTS_CITY = "city";
+exports.RESTAURANTS_STATE = "state";
+exports.RESTAURANTS_COUNTRY = "country";
+exports.RESTAURANTS_LATITUDE = "latitude";
+exports.RESTAURANTS_LONGITUDE = "longitude";
+
+exports.USERS_ID = "id";
+exports.USERS_NAME = "name";
+exports.USERS_EMAIL = "email";
+exports.USERS_FBTOKEN = "fbToken";
+exports.USERS_IMAGE = "image";
+
+exports.FEATURES_ID = "id";
+exports.FEATURES_NAME = "name";
+exports.FEATURES_DESCRIPTION = "description";
+exports.FEATURES_TAGLINE = "tagline";
+exports.FEATURES_IMAGE = "image";
+exports.FEATURES_MENUITEMID = "menuitemId";
+exports.FEATURES_RESTAURANTID = "restaurantId";
+
+exports.FRIENDS_ID = "userId";
+exports.FRIENDS_FRIENDID = "friendId";
+
+exports.EATACTIONS_ID = "id";
+exports.EATACTIONS_MENUITEMID = "menuItemId";
+exports.EATACTIONS_RESTAURANTID = exports.RESTAURANTS_FBID;
+exports.EATACTIONS_FBID = "facebookId";
+exports.EATACTIONS_USERID = "userId";
+exports.EATACTIONS_TAGS = "tags";
+exports.EATACTIONS_DESCRIPTION = "description";
+exports.EATACTIONS_DATE = "date";
+exports.EATACTIONS_MENUTYPE = exports.MENUITEMS_MENUTYPE;
+exports.EATACTIONS_FBTOKEN = exports.USERS_FBTOKEN;
+
+exports.EATACTIONS_FBTAGFRIENDS = "tagfriends";
+exports.EATACTIONS_FBIMGURL = "imgurl";
+
+exports.MENUTYPE_ID = "id";
+exports.MENUTYPE_MENUNAME = "menuName";
+exports.MENUTYPE_MENUIMG = "menuImg";
+exports.MENUTYPE_MENUID = "menuId";
+exports.MENUTYPE_FOODTYPE = "foodType";
+
+
+

@@ -1,0 +1,9 @@
+//"/api/action/eatItem" POST TO
+exports.API_EATACTIONS_MENUITEMID = "itemId";
+exports.API_EATACTIONS_RESTAURANTID = "restaurantId";
+exports.API_EATACTIONS_TAGFRIENDS = "tagFriends";
+exports.API_EATACTIONS_DESCRIPTION = "description";
+exports.API_EATACTIONS_MENUTYPE = "menuType";
+exports.API_EATACTIONS_FBTOKEN = "fbToken";
+exports.API_EATACTIONS_IMGURL = "imgUrl";
+

@@ -1,0 +1,27 @@
+exports.FB_APP_ID = "147738045314917";
+exports.FB_APP_SECRET = "ff888c7a1246817ad5e1d59d24479180";
+exports.FB_APP_NAMESPACE = "pveentesting";
+exports.FB_HOST = "graph.facebook.com";
+exports.FB_PORT = "443";
+
+exports.S3_KEY = "AKIAJBD4V3PZDRD4PFXA";
+exports.S3_SECRET = "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";
+exports.S3_BUCKET = "pjtp";
+
+exports.DEFAULT_EAT_PIC = "https://s3.amazonaws.com/pjtp/default.jpg";
+
+exports.DB_HOST = "kaheichan.com";
+exports.DB_SERVERNAME = "peterc23_menuloft_test";
+exports.DB_PORT = "3306";
+exports.DB_USERNAME = "peterc23_loft";
+exports.DB_PW = "khp2chan";
+
+exports.LOGGLY_TOKEN = "dd5c858e-bfa2-4fb3-acc4-7db746ecd3cf";
+exports.LOGGLY_SUBDOMAIN = "pjtp";
+exports.LOGGLY_USERNAME = "peterc23";
+exports.LOGGLY_PASSWORD = "welcome123";
+
+exports.APP_URL = "menuloft.com";
+exports.APP_PORT = "8080";
+exports.APP_LOCALHOST = "localhost";
+exports.GET_FACEBOOK_OBJECT_LINK = "http://menuloft.com/getFacebookObject/";
