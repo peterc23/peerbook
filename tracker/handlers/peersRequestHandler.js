@@ -1,6 +1,7 @@
 var dao = require('../db/DAOLayer.js');
 var log = require('../resources/logging.js');
 var errCodes = require('../resources/errorCodes.js');
+var tableProperties = require('..resources/tableProperties.js');
 
 
 function join (req,res)
@@ -8,22 +9,36 @@ function join (req,res)
     try{
         var peer = req.body;
 
-        if(peer.address == null || typeof peer.address == 'undefiend' || peer.port == null || peer.port == 'undefined'){
-            res.send()
+        if(typeof peer[tableProperties.PEERS_HOSTNAME] == 'undefiend' || peer[tableProperties.PEERS_PORT] == 'undefined'){
+            res.send(errCodes.ERR_PEER_NOT_SPECIFIED, 400);
+        }else{
+            peer[tableProperties.PEERS_STATUS] = tableProperties.PEERS_CONNECTED;
+            dao.retrievePeerInfo(peer, function(peerInfo){
+                if (typeof peerInfo == 'undefined' || peerInfo == null){
+                    dao.insertNewPeer(peer, function(err){
+                        if (err == null || typeof err == 'undefined'){
+                            res.send(errCodes.ERR_PEER_NOT_INSERTED, 400);
+                        }else{
+                            dao.retrieveFileInfo(peer, function(newPeerInfo){
+                                res.send(newPeerInfo, 200);
+                            });
+                        }
+                    });
+                }else{
+                    peerInfo[tableProperties.PEERS_STATUS] = tableProperties.PEERS_CONNECTED;
+                    dao.updatePeerStatusById(peerInfo, function(newPeerInfo){
+                        if (typeof peerInfo == 'undefined' || peerInfo == null){
+                            res.send(errCodes.ERR_PEER_NOT_INSERTED, 400);
+                        }else{
+                            res.send(peerInfo, 200);
+                        }
+                    })
+                }
+            })
         }
-
-        dao.findAllMenuItemsFromRestaurantId(req.params.restaurantId, function(menuItemList){
-
-            if(menuItemList == null || typeof menuItemList == 'undefined'){
-                console.log("Retrieve Restaurant Menu null from DB: ", req.params);
-                res.send(errCodes.ERR, 400);
-            } else {
-                res.send(menuItemList, 200);
-            }
-        });
     }catch(err){
-        log.error("Error when retrieving Restaurant Menus", err);
-        res.send(errCodes.ERR_CODE_400, 400);
+        console.log(errCodes.ERR_PEER_NOT_INSERTED, err);
+        res.send(errCodes.ERR_PEER_NOT_INSERTED, 400);
     }
 }
 

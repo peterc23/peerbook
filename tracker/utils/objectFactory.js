@@ -17,5 +17,21 @@ function dbFileInfoObject(fileId, timestamp, checksum, editing, path){
     }
 }
 
+function dbPeerInfoObject(peerId, hostname, port, status){
+    if(typeof peerId == 'undefined' || typeof  hostname == 'undefined' || typeof port == 'undefined' || typeof status == 'undefined'){
+        return;
+    }else{
+        var peerInfo = {};
+
+        peerInfo[tableProperties.PEERS_ID] = peerId;
+        peerInfo[tableProperties.PEERS_HOSTNAME] = hostname;
+        peerInfo[tableProperties.PEERS_PORT] = port;
+        peerInfo[tableProperties.PEERS_STATUS] = status;
+
+        return peerInfo;
+    }
+}
+
 exports.dbFileInfoObject = dbFileInfoObject;
+exports.dbPeerInfoObject =dbPeerInfoObject;
 

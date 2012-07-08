@@ -17,4 +17,7 @@ exports.PEERS_HOSTNAME = "hostname";
 exports.PEERS_PORT = "port";
 exports.PEERS_STATUS = "status";
 
+exports.PEERS_CONNECTED = "true";
+exports.PEERS_DISCONNECTED = "false";
+
 

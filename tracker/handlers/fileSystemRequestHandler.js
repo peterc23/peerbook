@@ -41,6 +41,7 @@ function insertFile (req,res)
 {
     try{
         dao.insertNewFile(req.params, function(info){
+            //TODO: add relationship
                 dao.retrieveFileInfo(req.params, function(fileInfo){
                     if(fileInfo == null || typeof fileInfo == 'undefined'){
                         log.info(errCodes.ERR_FILE_NOT_FOUND, req.params.restaurantId);
@@ -60,7 +61,7 @@ function deleteFile (req,res)
 {
     try{
         dao.deleteFile(req.params, function(err){
-
+            //TODO: delete relationsihps
             if(err == null || typeof err == 'undefined'){
                 res.send("File cannot be found", 400);
             } else {
@@ -72,7 +73,18 @@ function deleteFile (req,res)
     }
 }
 
+function fileReieved(req, res){
+    try{
+        dao.updateFileRecieved(req.params, funciton(err){
+
+        });
+    }catch(err){
+        console.log(err);
+        res.send("File cannot be found error", 400);
+    }
+}
 exports.insertFile = insertFile;
 exports.deleteFile = deleteFile;
 exports.read = read;
 exports.write = write;
+exports.fileReieved = fileReieved;
