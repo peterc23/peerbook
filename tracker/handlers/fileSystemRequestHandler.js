@@ -98,4 +98,5 @@ exports.insertFile = insertFile;
 exports.deleteFile = deleteFile;
 exports.read = read;
 exports.write = write;
+exports.test = test;
 //exports.fileReieved = fileReieved;
