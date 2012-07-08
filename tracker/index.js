@@ -13,27 +13,26 @@ app.configure(function() {
   }));
   app.use(express.methodOverride());
   app.use(app.router);
-  app.register('.html', require('jade'));
   app.use(express.static(__dirname + '/views'));
 });
 
 
 //handler for Peers
-app.post("/api/join", peersRequestHandler.join);
-app.post("/api/leave", peersRequestHandler.leave);
+app.post("/peer/join", peersRequestHandler.join);
+app.post("/peer/leave", peersRequestHandler.leave);
+
+app.get("/peer/status", peersRequestHandler.getStatus);
+
+
 
 //handler for Files
-app.post("/api/insert", fileSystemRequestHandler.insert);
-app.post("/api/delete", fileSystemRequestHandler.delete);
-app.post("/api/read", fileSystemRequestHandler.read);
-app.post("/api/write", fileSystemRequestHandler.write);
-app.post("/api/update", fileSystemRequestHandler.fileReieved);
+app.post("/file/insert", fileSystemRequestHandler.insert);
+app.post("/file/delete", fileSystemRequestHandler.delete);
+app.post("/file/read", fileSystemRequestHandler.read);
+app.post("/file/write", fileSystemRequestHandler.write);
+app.post("/file/update", fileSystemRequestHandler.fileReieved);
 
-app.post("/facebookmenu", function (req, res) {
-    res.sendfile("views/facebookmenu/login.html");
-});
-
-app.get("/getFacebookObject/:objectId", actionRequestHandler.getFacebookObject);
+app.get("/file/status", fileSystemRequestHandler.getStatus);
 
 // start the server
 app.listen(properties.APP_PORT);

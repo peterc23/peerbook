@@ -1,7 +1,6 @@
 var dao = require('../db/DAOLayer.js');
-var log = require('../resources/logging.js');
 var errCodes = require('../resources/errorCodes.js');
-var tableProperties = require('..resources/tableProperties.js');
+var tableProperties = require('../resources/tableProperties.js');
 
 
 function join (req,res)
@@ -37,7 +36,7 @@ function join (req,res)
             })
         }
     }catch(err){
-        console.log(errCodes.ERR_PEER_NOT_INSERTED, err);
+        console.log(errCodes.ERR_PEER_NOT_INSERTEDerr);
         res.send(errCodes.ERR_PEER_NOT_INSERTED, 400);
     }
 }
@@ -48,17 +47,32 @@ function leave (req,res)
         dao.findAllMenuItemsFromRestaurantId(req.params.restaurantId, function(menuItemList){
 
             if(menuItemList == null || typeof menuItemList == 'undefined'){
-                log.info("Retrieve Restaurant Menu null from DB, restaurant Id: ", req.params.restaurantId);
                 res.send(errCodes.ERR_CODE_400, 400);
             } else {
                 res.send(menuItemList, 200);
             }
         });
     }catch(err){
-        log.error("Error when retrieving Restaurant Menus", err);
         res.send(errCodes.ERR_CODE_400, 400);
+    }
+}
+
+function getStatus (req, res){
+    try{
+        dao.getAllPeerInfo(function(peerInfoList){
+           if(typeof peerInfoList == 'undefined'){
+               res.send(errCodes.ERR_CANNOT_RETRIEVE_PEERS, 400);
+           }else{
+               res.send(peerInfoList, 200);
+           }
+        });
+    }catch(err){
+        console.log(errCodes.ERR_CANNOT_RETRIEVE_PEERS);
+        console.log(err);
+        res.send(errCodes.ERR_CANNOT_RETRIEVE_PEERS, 400);
     }
 }
 
 exports.join = join;
 exports.leave = leave;
+exports.getStatus = getStatus;

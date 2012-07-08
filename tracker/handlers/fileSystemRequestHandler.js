@@ -72,7 +72,7 @@ function deleteFile (req,res)
         res.send("File cannot be found error", 400);
     }
 }
-
+/*
 function fileReieved(req, res){
     try{
         dao.updateFileRecieved(req.params, funciton(err){
@@ -83,8 +83,9 @@ function fileReieved(req, res){
         res.send("File cannot be found error", 400);
     }
 }
+*/
 exports.insertFile = insertFile;
 exports.deleteFile = deleteFile;
 exports.read = read;
 exports.write = write;
-exports.fileReieved = fileReieved;
+//exports.fileReieved = fileReieved;
