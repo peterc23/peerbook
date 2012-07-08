@@ -34,6 +34,8 @@ app.post("/file/update", fileSystemRequestHandler.fileReieved);
 
 app.get("/file/status", fileSystemRequestHandler.getStatus);
 
+app.post("/test", fileSystemRequestHandler.test);
+
 // start the server
 app.listen(properties.APP_PORT);
 console.log("Tracker started");

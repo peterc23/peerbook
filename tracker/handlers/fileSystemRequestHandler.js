@@ -84,6 +84,16 @@ function fileReieved(req, res){
     }
 }
 */
+
+function test(req, res){
+    console.log("testing screen");
+    console.log(req.body);
+    var jsonObject = {};
+    jsonObject.abcd = "your name";
+    jsonObject.hostname = "123";
+    jsonObject.port = "12345";
+    res.send(jsonObject, 200);
+}
 exports.insertFile = insertFile;
 exports.deleteFile = deleteFile;
 exports.read = read;
