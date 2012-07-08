@@ -12,3 +12,4 @@ exports.deleteFile = dbFileSystem.deleteFile;
 exports.retrievePeerInfo = dbPeers.retrievePeerInfo;
 exports.insertNewPeer = dbPeers.insertNewPeer;
 exports.updatePeerStatusById = dbPeers.updatePeerStatusById;
+exports.getAllPeerInfo = dbPeers.getAllPeerInfo;
