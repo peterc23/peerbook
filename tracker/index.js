@@ -1,8 +1,6 @@
 var express = require('express');
 var peersRequestHandler = require('./handlers/peersRequestHandler.js');
-var actionRequestHandler = require('./handlers/actionRequestHandler.js');
-var menuRequestHandler = require('./handlers/menuRequestHandler.js');
-var userRequestHandler = require('./handlers/userRequestHandler.js');
+var fileSystemRequestHandler = require('./handlers/fileSystemRequestHandler.js');
 var properties = require('./resources/properties.js');
 
 // create server
@@ -23,6 +21,13 @@ app.configure(function() {
 //handler for Peers
 app.post("/api/join", peersRequestHandler.join);
 app.post("/api/leave", peersRequestHandler.leave);
+
+//handler for Files
+app.post("/api/insert", fileSystemRequestHandler.insert);
+app.post("/api/delete", fileSystemRequestHandler.delete);
+app.post("/api/read", fileSystemRequestHandler.read);
+app.post("/api/write", fileSystemRequestHandler.write);
+
 
 // decalre routing
 
