@@ -49,7 +49,7 @@ function executeUpdateSingleQuery(statement, parameters, callback)
                 console.log("DB Single Update: ", err);
                 callback(err);
             }else{
-                if (callback) callback();
+                if (callback) callback("SUCCESS");
             }
             //client.end();
         }

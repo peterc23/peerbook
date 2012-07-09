@@ -38,7 +38,9 @@ function updatePeerStatusById(peerInfo, callback){
         callback(null);
     }else{
         client.executeUpdateSingleQuery('UPDATE ' + tableProperties.PEERS_TABLE + ' SET ' + tableProperties.PEERS_STATUS +
-            ' = ? WHERE ' + tableProperties.PEERS_ID + ' = ?', [peerInfo[tableProperties.PEERS_ID]], function(err){
+            ' = ? WHERE ' + tableProperties.PEERS_ID + ' = ?', [peerInfo[tableProperties.PEERS_STATUS],
+            peerInfo[tableProperties.PEERS_ID]],
+            function(err){
                 callback(err);
             });
     }

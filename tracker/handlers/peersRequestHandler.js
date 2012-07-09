@@ -19,7 +19,9 @@ function join (req,res)
                         if (err == null || typeof err == 'undefined'){
                             res.send(errCodes.ERR_PEER_NOT_INSERTED, 400);
                         }else{
-                            dao.retrieveFileInfo(peer, function(newPeerInfo){
+                            dao.retrievePeerInfo(peer, function(newPeerInfo){
+                                console.log("AMIGOS");
+                                console.log(newPeerInfo);
                                 var returnObj = factory.convertToJava(tableProperties.OBJECT_TYPE_PEER, newPeerInfo);
                                 res.send(returnObj, 200);
                             });
@@ -47,7 +49,9 @@ function join (req,res)
 function leave (req,res)
 {
     try{
-        dao.updatePeerStatusById(req.body, function(newPeerInfo){
+        var peer = req.body;
+        peer[tableProperties.PEERS_STATUS] = tableProperties.PEERS_DISCONNECTED;
+        dao.updatePeerStatusById(peer, function(newPeerInfo){
 
             if(newPeerInfo == null || typeof newPeerInfo == 'undefined'){
                 res.send(errCodes.ERR_PEER_NOT_SPECIFIED, 400);
