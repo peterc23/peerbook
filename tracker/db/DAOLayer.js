@@ -7,7 +7,6 @@ exports.insertNewFile = dbFileSystem.insertNewFile;
 exports.retrieveFileInfo = dbFileSystem.retrieveFileInfo;
 exports.deleteFile = dbFileSystem.deleteFile;
 
-
 //Peers
 exports.retrievePeerInfo = dbPeers.retrievePeerInfo;
 exports.insertNewPeer = dbPeers.insertNewPeer;

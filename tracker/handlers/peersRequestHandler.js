@@ -44,12 +44,12 @@ function join (req,res)
 function leave (req,res)
 {
     try{
-        dao.findAllMenuItemsFromRestaurantId(req.params.restaurantId, function(menuItemList){
+        dao.updatePeerStatusById(req.body, function(newPeerInfo){
 
-            if(menuItemList == null || typeof menuItemList == 'undefined'){
-                res.send(errCodes.ERR_CODE_400, 400);
+            if(newPeerInfo == null || typeof newPeerInfo == 'undefined'){
+                res.send(errCodes.ERR_PEER_NOT_SPECIFIED, 400);
             } else {
-                res.send(menuItemList, 200);
+                res.send("Success", 200);
             }
         });
     }catch(err){
