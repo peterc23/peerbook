@@ -20,16 +20,17 @@ public class main{
 		
 		// start server
 		ServerPeer serverPeer = new ServerPeer(host, port);
-		serverPeer.start(); // NEED TO REMOVE THIS
+		//serverPeer.start(); // NEED TO REMOVE THIS
 		
 		// start peer manager
 		PeerManager.getManager().setPeer(serverPeer);
-		PeerManager.getManager().start();
+		//PeerManager.getManager().start();
 		
 		// start reading from command prompt
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = null;
 		ConcreteStatus status = new ConcreteStatus();
+		PeerPostObject peerPost = null;
 		while(true) {
 			try{
 				System.out.print("> ");
@@ -39,12 +40,19 @@ public class main{
 					if(input.equalsIgnoreCase("query")){
 						serverPeer.query(status);
 					} else if (input.equalsIgnoreCase("join")) {
-						PeerManager.getManager().start();
 						serverPeer.start(); 
+						PeerManager.getManager().start();
+						peerPost = new PeerPostObject(serverPeer.hostname, serverPeer.port);
+						peerPost = (PeerPostObject)FileUtils.mapToObject(HttpRequest.postServer(Config.SERVER_PEER_JOIN, peerPost), PeerPostObject.class);
 					} else if (input.equalsIgnoreCase("leave")) {
-						System.exit(0);
-						//PeerManager.getManager().stop();
-						//serverPeer.stop(); 
+						if (peerPost == null) {
+							System.out.println("Warning: you cannot leave before joining");
+						} else {
+							HttpRequest.postServer(Config.SERVER_PEER_LEAVE, peerPost);
+							System.exit(0);
+							//PeerManager.getManager().stop();
+							//serverPeer.stop(); 
+						}
 					} else if (input.startsWith("insert")) {
 						if (serverPeer.query(status) == ReturnCodes.ERR_NO_PEERS_FOUND) {
 							System.out.println("You must join first before querying status");

@@ -10,6 +10,17 @@ import java.net.URLEncoder;
 
 public class HttpRequest {
 	
+	public static String postServer(String path, Object data) {
+		if (data == null) {
+			return post(Config.SERVER_HOST, Config.SERVER_PORT, path, null);
+		} else {
+			return post(Config.SERVER_HOST, Config.SERVER_PORT, path, FileUtils.mapToJSON(data));
+		}
+	}
+	
+	public static String postServer(String path, String data) {
+		return post(Config.SERVER_HOST, Config.SERVER_PORT, path, data);
+	}
 	// sample inputs
 	// hostname = "hostname.com"
 	// port = 80
@@ -57,5 +68,27 @@ public class HttpRequest {
 		
 		return response.toString();
 	}
-
+	
+	/*
+	public static void main(String[] args) {
+		//System.out.println(FileUtils.mapToJSON(new PeerPostObject()));
+		
+		//String test = "{\"id\":\"asdasd\",\"hostname\":null,\"port\":null,\"status\":null}";
+		//PeerPostObject object = (PeerPostObject)FileUtils.mapToObject(test, PeerPostObject.class);
+		System.out.println(FileUtils.mapToJSON(new PeerPostObject())); 
+		System.out.println(FileUtils.mapToJSON(new PeerListPostObject())); 
+		
+		PeerListPostObject peerList = new PeerListPostObject();
+		peerList.peerList = new PeerPostObject[5];
+		peerList.peerList[0] = new PeerPostObject();
+		System.out.println(FileUtils.mapToJSON(peerList)); 
+		
+		//String response = HttpRequest.postServer(Config.SERVER_PEER_STATUS, null);
+		//System.out.println(response);
+		//response = "{\"peerlist\":" + response + "}";
+		//System.out.println(response);
+		//PeerListPostObject peerlist = (PeerListPostObject)FileUtils.mapToObject(response, PeerListPostObject.class);
+		return ;
+	}
+	*/
 }

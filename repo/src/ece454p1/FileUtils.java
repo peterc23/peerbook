@@ -17,10 +17,33 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class FileUtils {
 
+	public static String mapToJSON(Object object) {
+		ObjectMapper oMapper = new ObjectMapper();
+		String result = null;
+		try {
+			result = oMapper.writeValueAsString(object);
+		} catch (Exception e) {
+		}
+		return result;
+	}
+	
+	public static Object mapToObject(String json, Class<?> t) {
+		ObjectMapper oMapper = new ObjectMapper();
+		Object result = null;
+		
+		try {
+			result = oMapper.readValue(json, t);
+		} catch (Exception e) {
+		}
+		return result;
+	}
 	
 	public static ArrayList<File> divideFiles(File file){
 		ArrayList<File> fileList = new ArrayList<File>();

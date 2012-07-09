@@ -10,8 +10,12 @@ public class Config {
 	
 	public static final String SHARE_PATH = "./bitTorrent/";
 	
-	public static final String HEADER_FILE_EXT = ".torrent";
-
-	public	final static String PEERS_FILE = "./peersFile.txt";
+	public static final String HEADER_FILE_EXT = ".torrent";	
+	
+	public static final String SERVER_HOST = "peerbook.kaheichan.com";
+	public static final int SERVER_PORT = 8080;
+	public static final String SERVER_PEER_JOIN = "/peer/join";
+	public static final String SERVER_PEER_LEAVE = "/peer/leave";
+	public static final String SERVER_PEER_STATUS = "/peer/status";
 
 }
