@@ -1,6 +1,7 @@
 var dao = require('../db/DAOLayer.js');
 var errCodes = require('../resources/errorCodes.js');
 var tableProperties = require('../resources/tableProperties.js');
+var factory = require('../utils/objectFactory.js');
 
 
 function join (req,res)
@@ -19,7 +20,8 @@ function join (req,res)
                             res.send(errCodes.ERR_PEER_NOT_INSERTED, 400);
                         }else{
                             dao.retrieveFileInfo(peer, function(newPeerInfo){
-                                res.send(newPeerInfo, 200);
+                                var returnObj = factory.convertToJava(tableProperties.OBJECT_TYPE_PEER, newPeerInfo);
+                                res.send(returnObj, 200);
                             });
                         }
                     });
@@ -29,11 +31,12 @@ function join (req,res)
                         if (typeof peerInfo == 'undefined' || peerInfo == null){
                             res.send(errCodes.ERR_PEER_NOT_INSERTED, 400);
                         }else{
-                            res.send(peerInfo, 200);
+                            var returnObj = factory.convertToJava(tableProperties.OBJECT_TYPE_PEER, peerInfo);
+                            res.send(returnObj, 200);
                         }
-                    })
+                    });
                 }
-            })
+            });
         }
     }catch(err){
         console.log(errCodes.ERR_PEER_NOT_INSERTEDerr);
@@ -66,10 +69,15 @@ function getStatus (req, res){
                var returnList = [];
                for(var i=0; i< peerInfoList.length; i++){
                    if (peerInfoList[i][tableProperties.PEERS_STATUS] == tableProperties.PEERS_CONNECTED){
-                        returnList.push(peerInfoList[i])
+                       var fileObj = factory.convertToJava(tableProperties.OBJECT_TYPE_PEER, peerInfoList[i]);
+                        returnList.push(fileObj);
                    }
                }
-               res.send(returnList, 200);
+               var returnObj = {};
+               returnObj[tableProperties.OBJECT_PEER_LIST] = returnList;
+               returnObj = factory.convertToJava(tableProperties.OBJECT_TYPE_PEER_LIST, returnObj);
+                   res.send(returnObj, 200);
+
            }
         });
     }catch(err){

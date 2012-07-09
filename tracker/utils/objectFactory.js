@@ -32,6 +32,18 @@ function dbPeerInfoObject(peerId, hostname, port, status){
     }
 }
 
+function convertToJava(objectType, object){
+    if (objectType == null || objectType == 'undefined' || object == null || object == 'undefined'){
+        return;
+    }else{
+        var javaObj = object;
+        javaObj[tableProperties.OBJECT_TYPE] = objectType;
+
+        return javaObj;
+    }
+}
+
 exports.dbFileInfoObject = dbFileInfoObject;
 exports.dbPeerInfoObject =dbPeerInfoObject;
+exports.convertToJava = convertToJava;
 

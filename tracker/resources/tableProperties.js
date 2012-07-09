@@ -20,4 +20,9 @@ exports.PEERS_STATUS = "status";
 exports.PEERS_CONNECTED = "true";
 exports.PEERS_DISCONNECTED = "false";
 
+exports.OBJECT_TYPE = "objectType";
+exports.OBJECT_TYPE_PEER = "PeerPostObject";
+exports.OBJECT_TYPE_PEER_LIST = "PeerListPostObject";
+exports.OBJECT_PEER_LIST = "peerList";
+
 
