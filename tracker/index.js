@@ -20,7 +20,7 @@ app.configure(function() {
 app.post("/peer/join", writeBackBoneHeaders, peersRequestHandler.join);
 app.post("/peer/leave", writeBackBoneHeaders, peersRequestHandler.leave);
 
-app.get("/peer/status", writeBackBoneHeaders, peersRequestHandler.getStatus);
+app.post("/peer/status", writeBackBoneHeaders, peersRequestHandler.getStatus);
 
 
 
@@ -31,7 +31,7 @@ app.post("/file/read", writeBackBoneHeaders, fileSystemRequestHandler.read);
 app.post("/file/write", writeBackBoneHeaders, fileSystemRequestHandler.write);
 app.post("/file/update", writeBackBoneHeaders, fileSystemRequestHandler.fileReieved);
 
-app.get("/file/status", writeBackBoneHeaders, fileSystemRequestHandler.getStatus);
+app.post("/file/status", writeBackBoneHeaders, fileSystemRequestHandler.getStatus);
 
 app.post("/test", writeBackBoneHeaders, fileSystemRequestHandler.test);
 
