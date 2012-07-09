@@ -63,7 +63,13 @@ function getStatus (req, res){
            if(typeof peerInfoList == 'undefined'){
                res.send(errCodes.ERR_CANNOT_RETRIEVE_PEERS, 400);
            }else{
-               res.send(peerInfoList, 200);
+               var returnList = [];
+               for(var i=0; i< peerInfoList.length; i++){
+                   if (peerInfoList[i][tableProperties.PEERS_STATUS] == tableProperties.PEERS_CONNECTED){
+                       returnList.push(peerInfoList[i]);
+                   }
+               }
+               res.send(returnList, 200);
            }
         });
     }catch(err){

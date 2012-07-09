@@ -45,9 +45,9 @@ function updatePeerStatusById(peerInfo, callback){
 }
 
 function getAllPeerInfo(callback){
-    client.executeFindMultipleQuery('SELECT * FROM ?', [tableProperties.PEERS_TABLE] ,createPeerInfoFromSingleResult,
+    client.executeFindMultipleQuery('SELECT * FROM ' + tableProperties.PEERS_TABLE, [] ,createPeerInfoFromSingleResult,
         function(peersList){
-            return peersList;
+            callback(peersList);
         });
 }
 

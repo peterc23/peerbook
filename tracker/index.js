@@ -17,21 +17,21 @@ app.configure(function() {
 });
 
 //handler for Peers
-app.post("/peer/join", peersRequestHandler.join);
-app.post("/peer/leave", peersRequestHandler.leave);
+app.post("/peer/join", writeBackBoneHeaders, peersRequestHandler.join);
+app.post("/peer/leave", writeBackBoneHeaders, peersRequestHandler.leave);
 
-app.get("/peer/status", peersRequestHandler.getStatus);
+app.get("/peer/status", writeBackBoneHeaders, peersRequestHandler.getStatus);
 
 
 
 //handler for Files
-app.post("/file/insert", fileSystemRequestHandler.insert);
-app.post("/file/delete", fileSystemRequestHandler.delete);
-app.post("/file/read", fileSystemRequestHandler.read);
-app.post("/file/write", fileSystemRequestHandler.write);
-app.post("/file/update", fileSystemRequestHandler.fileReieved);
+app.post("/file/insert", writeBackBoneHeaders, fileSystemRequestHandler.insert);
+app.post("/file/delete", writeBackBoneHeaders, fileSystemRequestHandler.delete);
+app.post("/file/read", writeBackBoneHeaders, fileSystemRequestHandler.read);
+app.post("/file/write", writeBackBoneHeaders, fileSystemRequestHandler.write);
+app.post("/file/update", writeBackBoneHeaders, fileSystemRequestHandler.fileReieved);
 
-app.get("/file/status", fileSystemRequestHandler.getStatus);
+app.get("/file/status", writeBackBoneHeaders, fileSystemRequestHandler.getStatus);
 
 app.post("/test", writeBackBoneHeaders, fileSystemRequestHandler.test);
 
