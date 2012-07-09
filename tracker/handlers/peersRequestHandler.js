@@ -64,12 +64,16 @@ function getStatus (req, res){
                res.send(errCodes.ERR_CANNOT_RETRIEVE_PEERS, 400);
            }else{
                var returnList = [];
-               for(var i=0; i< peerInfoList.length; i++){
-                   if (peerInfoList[i][tableProperties.PEERS_STATUS] == tableProperties.PEERS_CONNECTED){
-                       returnList.push(peerInfoList[i]);
+               if (typeof peerInfoList == 'undefined'){
+                   res.send(errCodes.ERR_CANNOT_RETRIEVE_PEERS, 400);
+               }else{
+                   for(var i=0; i< peerInfoList.length; i++){
+                       if (peerInfoList[i][tableProperties.PEERS_STATUS] == tableProperties.PEERS_CONNECTED){
+                           returnList.push(peerInfoList[i]);
+                       }
                    }
+                   res.send(returnList, 200);
                }
-               res.send(returnList, 200);
            }
         });
     }catch(err){
