@@ -92,6 +92,9 @@ public class PeerManager {
 			// work lock
 			checkIsWorking();
 			
+			// poll to check new peers to be added
+			peer.getPeers().checkForNewPeers();
+			
 			ArrayList<HeaderFile> myheaders = FileUtils.getHeaderFiles();
 			if (myheaders != null && myheaders.size() > 0) {
 				

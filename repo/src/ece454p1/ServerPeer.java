@@ -46,7 +46,7 @@ public class ServerPeer extends Peer{
 	private synchronized void startPeers() {
 		// initialise all the peers
 		ConcretePeers peers = new ConcretePeers();
-		if(peers.initialize(Config.PEERS_FILE, this.hostname, this.port) != 0){
+		if(peers.initialize(this.hostname, this.port) != ReturnCodes.ERR_OK){
 			return;
 		}
 		this.peers = peers;

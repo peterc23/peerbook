@@ -1,39 +1,75 @@
 package ece454p1;
-import java.io.*;
 
+import java.util.ArrayList;
 
 public class ConcretePeers extends Peers {
-
-	public int initialize(String peersFile, String withoutHost, String withoutPort) {
+	String withoutHost = null;
+	String withoutPort = null;
+	
+	public class HostAndPort {
+		public String hostname;
+		public String port;
 		
-		BufferedReader br = null; 
-		try {
-			br = new BufferedReader(new FileReader(peersFile));
-			String server;
-			while((server = br.readLine()) != null){
-				String[] tokens = server.split(" ");
-				if (!withoutHost.equals(tokens[0]) || !withoutPort.equals(tokens[1])) {
-					peers.add(new ClientPeer(tokens[0], tokens[1]));
-					numPeers++;
-				}
-			}
-			return ReturnCodes.ERR_OK;
-		} catch (FileNotFoundException e1) {
-			System.out.println("Cannot Find PeersFile");
-			return ReturnCodes.ERR_NO_PEERS_FOUND;
-		} catch (IOException e) {
-			System.out.println("cannot Read PeersFile");
-			return ReturnCodes.ERR_NO_PEERS_FOUND;
-		} finally {
-			if (br != null){
-				try {
-					br.close();
-				} catch (IOException e) {
-					System.out.println("cannot Close PeersFile");
-				}
+		public HostAndPort(String hostname, String port) {
+			this.hostname = hostname;
+			this.port = port;
+		}
+	}
+
+	public int initialize(String withoutHost, String withoutPort) {
+		this.withoutHost = withoutHost;
+		this.withoutPort = withoutPort;
+		
+		String response = HttpRequest.postServer(Config.SERVER_PEER_STATUS, null);
+		if (response == null) return ReturnCodes.ERR_OK;
+		
+		PeerListPostObject peerlist = (PeerListPostObject)FileUtils.mapToObject(response, PeerListPostObject.class);
+		
+		if (peerlist == null) return ReturnCodes.ERR_OK;
+		
+		for (PeerPostObject obj : peerlist.peerList) {
+			if (!withoutHost.equals(obj.hostname) && !withoutPort.equals(obj.port)) {
+				peers.add(new ClientPeer(obj.hostname, obj.port));
+				numPeers++;
 			}
 		}
-
+				
+		return ReturnCodes.ERR_OK;
+	}
+	
+	public void checkForNewPeers() {
+		String response = HttpRequest.postServer(Config.SERVER_PEER_STATUS, null);
+		if (response == null) return;
+		
+		PeerListPostObject peerlist = (PeerListPostObject)FileUtils.mapToObject(response, PeerListPostObject.class);
+		if (peerlist == null) return;
+		
+		ArrayList<HostAndPort> toAdd = new ArrayList<HostAndPort>();
+		for (PeerPostObject obj : peerlist.peerList) {
+			if (!withoutHost.equals(obj.hostname) || !withoutPort.equals(obj.port)) {
+				toAdd.add(new HostAndPort(obj.hostname, obj.port));
+			}
+		}
+		if (toAdd.size() != 0) {
+			// check to see if there is any new peers to be connected
+			ClientPeer client = null;
+			HostAndPort hostPort = null;
+			for (int i=0; i<peers.size(); i++) {
+				for (int j=toAdd.size()-1; j >= 0; j--) {
+					client = (ClientPeer)peers.get(i);
+					hostPort = toAdd.get(j);
+					if (client.hostname.equals(hostPort.hostname) && client.port.equals(hostPort.port)) {
+						toAdd.remove(j);
+						break;
+					}
+				}
+			}
+			// update the new peers
+			for (int i=0; i<toAdd.size(); i++) {
+				peers.add(new ClientPeer(toAdd.get(i).hostname, toAdd.get(i).port));
+				numPeers++;
+			}
+		}
 	}
 
 	@Override
