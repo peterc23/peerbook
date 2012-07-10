@@ -56,14 +56,13 @@ function getAllFileInfo(callback){
 
 function updateFileInfo(fileInfo, callback){
     if (fileInfo[tableProperties.FILESYSTEM_ID] == null || typeof  fileInfo[tableProperties.FILESYSTEM_ID] == 'undefined' ||
-        fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined' ||
-        fileInfo[tableProperties.FILESYSTEM_TIMESTAMP] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined'){
+        fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined'){
         callback(null);
         return;
     }else{
         client.executeUpdateSingleQuery('UPDATE ' + tableProperties.FILESYSTEM_TABLE + ' SET ' + tableProperties.FILESYSTEM_CHECKSUM +
-            ' = ? AND ' + tableProperties.FILESYSTEM_TIMESTAMP + ' = ? WHERE ' + tableProperties.FILESYSTEM_ID + ' = ?',
-            [fileInfo[tableProperties.FILESYSTEM_CHECKSUM], fileInfo[tableProperties.FILESYSTEM_TIMESTAMP],
+            ' = ? WHERE ' + tableProperties.FILESYSTEM_ID + ' = ?',
+            [fileInfo[tableProperties.FILESYSTEM_CHECKSUM],
                 fileInfo[tableProperties.FILESYSTEM_ID]],
             function(info){
                 callback(info);

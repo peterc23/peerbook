@@ -3,23 +3,6 @@ var errCodes = require('../resources/errorCodes.js');
 var tableProperties = require('../resources/tableProperties.js');
 var factory = require('../utils/objectFactory.js');
 
-function read (req,res)
-{
-    try{
-        dao.findAllMenuItemsFromRestaurantId(req.params.restaurantId, function(menuItemList){
-
-            if(menuItemList == null || typeof menuItemList == 'undefined'){
-                res.send(errCodes.ERR_CODE_400, 400);
-            } else {
-                res.send(menuItemList, 200);
-            }
-        });
-    }catch(err){
-        log.error("Error when retrieving Restaurant Menus", err);
-        res.send(errCodes.ERR_CODE_400, 400);
-    }
-}
-
 function write (req,res)
 {
     try{
@@ -124,7 +107,6 @@ function test(req, res){
 
 exports.insertFile = insertFile;
 exports.deleteFile = deleteFile;
-exports.read = read;
 exports.write = write;
 exports.test = test;
 exports.getStatus = getStatus;

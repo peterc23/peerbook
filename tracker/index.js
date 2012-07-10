@@ -26,12 +26,9 @@ app.post("/peer/status", writeBackBoneHeaders, peersRequestHandler.getStatus);
 
 
 //handler for Files
-app.post("/file/insert", writeBackBoneHeaders, fileSystemRequestHandler.insert);
-app.post("/file/delete", writeBackBoneHeaders, fileSystemRequestHandler.delete);
-app.post("/file/read", writeBackBoneHeaders, fileSystemRequestHandler.read);
+app.post("/file/insert", writeBackBoneHeaders, fileSystemRequestHandler.insertFile);
+app.post("/file/delete", writeBackBoneHeaders, fileSystemRequestHandler.deleteFile);
 app.post("/file/write", writeBackBoneHeaders, fileSystemRequestHandler.write);
-app.post("/file/update", writeBackBoneHeaders, fileSystemRequestHandler.fileReieved);
-app.post("/file/open", writeBackBoneHeaders, fileSystemRequestHandler.openFile);
 
 app.post("/file/status", writeBackBoneHeaders, fileSystemRequestHandler.getStatus);
 
