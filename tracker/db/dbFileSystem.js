@@ -23,7 +23,8 @@ function insertNewFile(fileInfo, callback)
 function retrieveFileInfo(fileInfo, callback){
     if (fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined' ||
         fileInfo[tableProperties.FILESYSTEM_TIMESTAMP] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined'){
-        callback(null)
+        callback(null);
+        return;
     }else{
         client.executeFindSingleQuery('SELECT * FROM ' + tableProperties.FILESYSTEM_TABLE + ' WHERE ' +
             tableProperties.FILESYSTEM_CHECKSUM + ' = ? AND ' + tableProperties.FILESYSTEM_TIMESTAMP + ' = ?', [fileInfo[tableProperties.FILESYSTEM_CHECKSUM,
@@ -37,6 +38,7 @@ function deleteFile(fileInfo, callback)
 {
     if (fileInfo[tableProperties.FILESYSTEM_ID] == null || typeof eatAction[tableProperties.FILESYSTEM_ID] == 'undefined') {
         callback(null);
+        return;
     }else{
         client.executeDeleteSingleQuery('DELETE * FROM ' + tableProperties.FILESYSTEM_TABLE  + ' WHERE ' +
             tableProperties.FILESYSTEM_ID + ' = ?', [fileInfo[tableProperties.FILESYSTEM_ID]], function(err) {
@@ -45,11 +47,37 @@ function deleteFile(fileInfo, callback)
     }
 }
 
+function getAllFileInfo(callback){
+    client.executeFindMultipleQuery('SELECT * FROM ' + tableProperties.FILESYSTEM_TABLE, [] ,createFileInfoFromSingleResult,
+        function(fileList){
+            callback(fileList);
+        });
+}
+
+function updateFileInfo(fileInfo, callback){
+    if (fileInfo[tableProperties.FILESYSTEM_ID] == null || typeof  fileInfo[tableProperties.FILESYSTEM_ID] == 'undefined' ||
+        fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined' ||
+        fileInfo[tableProperties.FILESYSTEM_TIMESTAMP] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined'){
+        callback(null);
+        return;
+    }else{
+        client.executeUpdateSingleQuery('UPDATE ' + tableProperties.FILESYSTEM_TABLE + ' SET ' + tableProperties.FILESYSTEM_CHECKSUM +
+            ' = ? AND ' + tableProperties.FILESYSTEM_TIMESTAMP + ' = ? WHERE ' + tableProperties.FILESYSTEM_ID + ' = ?',
+            [fileInfo[tableProperties.FILESYSTEM_CHECKSUM], fileInfo[tableProperties.FILESYSTEM_TIMESTAMP],
+                fileInfo[tableProperties.FILESYSTEM_ID]],
+            function(info){
+                callback(info);
+            });
+
+    }
+
+}
+
 function createFileInfoFromSingleResult(result)
 {
     if (result == null || typeof result == 'undefined')
     {
-        return;
+        return null;
     }
     return factory.dbFileInfoObject(result[tableProperties.FILESYSTEM_ID], result[tableProperties.FILESYSTEM_TIMESTAMP],
         result[tableProperties.FILESYSTEM_CHECKSUM],result[tableProperties.FILESYSTEM_EDITING],
@@ -59,3 +87,5 @@ function createFileInfoFromSingleResult(result)
 exports.insertNewFile = insertNewFile;
 exports.retrieveFileInfo = retrieveFileInfo;
 exports.deleteFile = deleteFile;
+exports.getAllFileInfo = getAllFileInfo;
+exports.updateFileInfo = updateFileInfo;

@@ -6,6 +6,8 @@ var dbPeers = require('./dbPeers.js');
 exports.insertNewFile = dbFileSystem.insertNewFile;
 exports.retrieveFileInfo = dbFileSystem.retrieveFileInfo;
 exports.deleteFile = dbFileSystem.deleteFile;
+exports.getAllFileInfo = dbFileSystem.getAllFileInfo;
+exports.updateFileInfo = dbFileSystem.updateFileInfo;
 
 //Peers
 exports.retrievePeerInfo = dbPeers.retrievePeerInfo;
