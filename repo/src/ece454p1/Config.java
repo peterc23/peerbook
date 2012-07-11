@@ -17,5 +17,12 @@ public class Config {
 	public static final String SERVER_PEER_JOIN = "/peer/join";
 	public static final String SERVER_PEER_LEAVE = "/peer/leave";
 	public static final String SERVER_PEER_STATUS = "/peer/status";
+	
+	public static final String SERVER_START_SYNC = "/sync/start";
+	public static final String SERVER_STOP_SYNC = "/sync/stop";
+	public static final String SERVER_SYNC_STATUS = "/sync/status";
+	public static final int SYNC_TRY_COUNT = 3;
+	
+	public static final String SERVER_CHECKSUM = "/file/write";
 
 }

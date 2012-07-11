@@ -122,97 +122,102 @@ public class PeerManager {
 					}
 				}
 				
-				// for sending
-				peer.query(status);
-				
-				// check which part files the client doesn't have
-				// get all the chunks
-				HashMap<String, Boolean> chunkMap = new HashMap<String, Boolean>();
-				HashMap<Integer, Boolean> headerMap = new HashMap<Integer, Boolean>();
-				for (HeaderFile head : myheaders) {
-					for (int i=0; i<head.localChunksPresent.length; i++) {
-						if (head.localChunksPresent[i]) {
-							ChunkInfo info = new ChunkInfo();
-							info.chunk = i;
-							info.headId = head.fileId;
-							chunkMap.put(info.toString(), false);
+				String toSync = HttpRequest.postServer(Config.SERVER_SYNC_STATUS, null);
+				if ("notok".equals(toSync)) {
+					// skip sync, and wait for the next cycle
+				} else {
+					// for sending
+					peer.query(status);
+					
+					// check which part files the client doesn't have
+					// get all the chunks
+					HashMap<String, Boolean> chunkMap = new HashMap<String, Boolean>();
+					HashMap<Integer, Boolean> headerMap = new HashMap<Integer, Boolean>();
+					for (HeaderFile head : myheaders) {
+						for (int i=0; i<head.localChunksPresent.length; i++) {
+							if (head.localChunksPresent[i]) {
+								ChunkInfo info = new ChunkInfo();
+								info.chunk = i;
+								info.headId = head.fileId;
+								chunkMap.put(info.toString(), false);
+							}
 						}
+						headerMap.put(head.fileId, false);
 					}
-					headerMap.put(head.fileId, false);
-				}
-			
 				
-				ClientPeer client = null;
-				ArrayList<HeaderFile> tempHead = null;
-				ChunkInfo tempInfo = null;
-				int leastReplication = -1;
-				int tempReplication = -1;
-				boolean headFlag = false;
-				if (this.peer.getPeers() == null) {
-					// probably this peer has been disconnected
-					stop();
-					continue;
-				}
-				for (Peer temppeer : this.peer.peers.peers) {
-					client = (ClientPeer)temppeer;
 					
-					// if we are already sending to this peer or not connected to it, don't send
-					if (!client.isConnected() || client.isSending()) continue;
-					
-					// set matching ones to true
-					tempHead = status.headerfiles.get(client.getSocket());
-					if(tempHead == null || tempHead.size() <= 0) { 
-						// just send the first header file in my computer if client doesn't have any
-						client.sendFile(FileUtils.getHeadPathFromId(myheaders.get(0).fileId), false);
+					ClientPeer client = null;
+					ArrayList<HeaderFile> tempHead = null;
+					ChunkInfo tempInfo = null;
+					int leastReplication = -1;
+					int tempReplication = -1;
+					boolean headFlag = false;
+					if (this.peer.getPeers() == null) {
+						// probably this peer has been disconnected
+						stop();
 						continue;
-					} else {
-						// check which header files the client doesn't have
-						headFlag = false;
-						for (HeaderFile eachHead : tempHead){
-							headerMap.put(eachHead.fileId, true);
-						}
-						for (Integer fileId : headerMap.keySet()){
-							if(!headerMap.get(fileId).booleanValue()) {
-								headFlag = true;
-								client.sendFile(FileUtils.getHeadPathFromId(fileId), false);
+					}
+					for (Peer temppeer : this.peer.peers.peers) {
+						client = (ClientPeer)temppeer;
+						
+						// if we are already sending to this peer or not connected to it, don't send
+						if (!client.isConnected() || client.isSending()) continue;
+						
+						// set matching ones to true
+						tempHead = status.headerfiles.get(client.getSocket());
+						if(tempHead == null || tempHead.size() <= 0) { 
+							// just send the first header file in my computer if client doesn't have any
+							client.sendFile(FileUtils.getHeadPathFromId(myheaders.get(0).fileId), false);
+							continue;
+						} else {
+							// check which header files the client doesn't have
+							headFlag = false;
+							for (HeaderFile eachHead : tempHead){
+								headerMap.put(eachHead.fileId, true);
 							}
-						}
-						if(headFlag == true) continue;
-						
-						// rest all to false
-						for (String info : chunkMap.keySet()) {
-							chunkMap.put(info, false);
-						}
-						
-						for (HeaderFile eachHead : tempHead) {
-							for (int i=0; i<eachHead.localChunksPresent.length; i++) {
-								if (eachHead.localChunksPresent[i]) {
-									tempInfo = new ChunkInfo();
-									tempInfo.headId = eachHead.fileId;
-									tempInfo.chunk = i;
-									chunkMap.put(tempInfo.toString(), true);
+							for (Integer fileId : headerMap.keySet()){
+								if(!headerMap.get(fileId).booleanValue()) {
+									headFlag = true;
+									client.sendFile(FileUtils.getHeadPathFromId(fileId), false);
 								}
 							}
-						}
-						// get least replication for don't exist chunks
-						ChunkInfo info = new ChunkInfo();
-						leastReplication = -1;
-						tempReplication = -1;
-						String resultInfo = null;
-						for (String infoString : chunkMap.keySet()) {
-							info.fromString(infoString);
-							if (!chunkMap.get(infoString).booleanValue()) {
-								tempReplication = status.chunkReplication.get(info.headId).get(info.chunk);
-								if (leastReplication == -1 || tempReplication < leastReplication) {
-									leastReplication = tempReplication;
-									resultInfo = infoString;
+							if(headFlag == true) continue;
+							
+							// rest all to false
+							for (String info : chunkMap.keySet()) {
+								chunkMap.put(info, false);
+							}
+							
+							for (HeaderFile eachHead : tempHead) {
+								for (int i=0; i<eachHead.localChunksPresent.length; i++) {
+									if (eachHead.localChunksPresent[i]) {
+										tempInfo = new ChunkInfo();
+										tempInfo.headId = eachHead.fileId;
+										tempInfo.chunk = i;
+										chunkMap.put(tempInfo.toString(), true);
+									}
 								}
 							}
-						}
-						// send least replicated file
-						if (resultInfo != null) {
-							info.fromString(resultInfo);
-							client.sendFile(FileUtils.getChunkPathFromId(info.headId, info.chunk+1), false);
+							// get least replication for don't exist chunks
+							ChunkInfo info = new ChunkInfo();
+							leastReplication = -1;
+							tempReplication = -1;
+							String resultInfo = null;
+							for (String infoString : chunkMap.keySet()) {
+								info.fromString(infoString);
+								if (!chunkMap.get(infoString).booleanValue()) {
+									tempReplication = status.chunkReplication.get(info.headId).get(info.chunk);
+									if (leastReplication == -1 || tempReplication < leastReplication) {
+										leastReplication = tempReplication;
+										resultInfo = infoString;
+									}
+								}
+							}
+							// send least replicated file
+							if (resultInfo != null) {
+								info.fromString(resultInfo);
+								client.sendFile(FileUtils.getChunkPathFromId(info.headId, info.chunk+1), false);
+							}
 						}
 					}
 				}

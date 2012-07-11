@@ -153,6 +153,8 @@ public class ServerPeer extends Peer{
 			// special message, parse it
 			if (action.type == Action.ActionType.fileInfo){
 				return retrieveFileInfo();
+			} else if (action.type == Action.ActionType.deleteFile) {
+				FileUtils.deleteTorrentAndFiles(action.filePath);
 			}
 		}
 		else if (file != null) {
@@ -226,7 +228,22 @@ public class ServerPeer extends Peer{
 		}
 	}
 	
+	public void broadCastAction(Object message) {
+		broadCastMessage(FileUtils.mapToJSON(message));
+	}
 	
+	public void broadCastMessage(String message) {
+		if (this.peers != null) {
+			for (int i=0; i<this.peers.numPeers; i++) {
+				ClientPeer peer = ((ClientPeer)this.peers.getPeer(i));
+				if (peer.isConnected()) {
+					peer.sendMessage(message, false);	
+				}
+			}
+		} else {
+			System.out.println("Warning: you have to join first before you can send messages");
+		}
+	}
 
 	@Override
 	public int query(Status status) {

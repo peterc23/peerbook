@@ -7,12 +7,14 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,6 +26,79 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class FileUtils {
 
+	public static void deleteChuckFiles(String absolutePath) {
+		int pos = absolutePath.lastIndexOf('/') + 1;
+		String filename = absolutePath.substring(pos);
+		File folder = new File(absolutePath.substring(0, pos));
+		File [] listOfFiles = folder.listFiles();
+		if (listOfFiles == null) return;
+		for (File file : listOfFiles) {
+			if (file.getName().startsWith(filename+".part")) {
+				file.delete();
+			}
+		}
+	}
+	
+	public static void deleteTorrentAndFiles(String relativePath) {
+		int pos = relativePath.lastIndexOf('/') + 1;
+		String filename = relativePath.substring(pos);
+		File folder = new File(Config.SHARE_PATH + relativePath.substring(0, pos));
+		File[] files = folder.listFiles();
+		if (files == null) return;
+		for (File file : files) {
+			if (file.getName().startsWith(filename)) {
+				file.delete();
+			}
+		}
+	}
+	
+	public static void writeFile(String filePath, String fileContent) throws IOException {
+		BufferedWriter out = new BufferedWriter(new FileWriter(filePath));
+		out.write(fileContent);
+		out.close();
+	}
+	
+	public static String readFile( String file ) throws IOException {
+	    BufferedReader reader = new BufferedReader( new FileReader (file));
+	    String         line = null;
+	    StringBuilder  stringBuilder = new StringBuilder();
+	    String         ls = System.getProperty("line.separator");
+
+	    while( ( line = reader.readLine() ) != null ) {
+	        stringBuilder.append( line );
+	        stringBuilder.append( ls );
+	    }
+
+	    return stringBuilder.toString();
+	}
+	
+	public static void copyFile(String sourceFile, String destFile) throws IOException {
+		copyFile(new File(sourceFile), new File(destFile));
+	}
+	
+	public static void copyFile(File sourceFile, File destFile) throws IOException {
+	    if(!destFile.exists()) {
+			destFile.createNewFile();
+	    }
+
+	    FileChannel source = null;
+	    FileChannel destination = null;
+
+	    try {
+	        source = new FileInputStream(sourceFile).getChannel();
+	        destination = new FileOutputStream(destFile).getChannel();
+	        destination.transferFrom(source, 0, source.size());
+	    }
+	    finally {
+	        if(source != null) {
+	            source.close();
+	        }
+	        if(destination != null) {
+	            destination.close();
+	        }
+	    }
+	}
+	
 	public static String mapToJSON(Object object) {
 		ObjectMapper oMapper = new ObjectMapper();
 		String result = null;
@@ -46,6 +121,7 @@ public class FileUtils {
 	}
 	
 	public static ArrayList<File> divideFiles(File file){
+
 		ArrayList<File> fileList = new ArrayList<File>();
 		long fileSize = file.length();
 		int read = 0;
@@ -76,6 +152,16 @@ public class FileUtils {
 		}else{
 			fileList.add(file);
 		}
+		
+		// bug fix, hack
+		if (file.length() < Config.CHUNK_SIZE) {
+			try {
+				FileUtils.copyFile(file.getAbsolutePath(), file.getAbsolutePath()+".part1");
+			} catch (Exception e) {
+				// do nothing
+			}
+		}
+			
 		return fileList;
 	}
 	
@@ -335,6 +421,34 @@ public class FileUtils {
 			}
 		}
 		return file;
+	}
+	
+	public static synchronized void updateHeaderFileForWrite(String relativePath, HeaderFile file, ArrayList<File> chunks) {
+		ObjectMapper oMapper = new ObjectMapper();
+		if(relativePath.charAt(0) == '/'){
+			relativePath = relativePath.substring(1);
+		}
+		File returnFile = new File(Config.SHARE_PATH + relativePath + ".torrent");
+		HeaderFile headFile = null;
+		Writer output = null;
+		
+		headFile = file;
+		
+		headFile.localChunksPresent = new boolean[chunks.size()];
+		for(int i=0; i<chunks.size(); i++){
+			headFile.localChunksPresent[i] = true;
+		}
+		
+		
+		try {
+			output = new BufferedWriter(new FileWriter(returnFile));
+			output.write(oMapper.writeValueAsString(headFile));
+			output.close();
+		} catch (Exception e) {
+			System.out.println("output header file");
+			System.out.println(e);
+		}
+		//return returnFile;
 	}
 	
 	// takes in torrent file

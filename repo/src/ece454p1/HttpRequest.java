@@ -2,11 +2,13 @@ package ece454p1;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class HttpRequest {
 	
@@ -71,23 +73,12 @@ public class HttpRequest {
 	
 	/*
 	public static void main(String[] args) {
-		//System.out.println(FileUtils.mapToJSON(new PeerPostObject()));
-		
-		//String test = "{\"id\":\"asdasd\",\"hostname\":null,\"port\":null,\"status\":null}";
-		//PeerPostObject object = (PeerPostObject)FileUtils.mapToObject(test, PeerPostObject.class);
-		System.out.println(FileUtils.mapToJSON(new PeerPostObject())); 
-		System.out.println(FileUtils.mapToJSON(new PeerListPostObject())); 
-		
-		PeerListPostObject peerList = new PeerListPostObject();
-		peerList.peerList = new PeerPostObject[5];
-		peerList.peerList[0] = new PeerPostObject();
-		System.out.println(FileUtils.mapToJSON(peerList)); 
-		
-		//String response = HttpRequest.postServer(Config.SERVER_PEER_STATUS, null);
-		//System.out.println(response);
-		//response = "{\"peerlist\":" + response + "}";
-		//System.out.println(response);
-		//PeerListPostObject peerlist = (PeerListPostObject)FileUtils.mapToObject(response, PeerListPostObject.class);
+		// delete the chunks and update header file
+		HeaderFile torrent = FileUtils.readHeaderFile(new File(Config.SHARE_PATH+"f8854.pdf"+Config.HEADER_FILE_EXT));
+		FileUtils.deleteChuckFiles("/f8854.pdf");
+		ArrayList<File> files = FileUtils.divideFiles(new File(Config.SHARE_PATH+"/f8854.pdf"));
+		files.remove(0);
+		FileUtils.updateHeaderFileForWrite("/f8854.pdf", torrent, files);
 		return ;
 	}
 	*/
