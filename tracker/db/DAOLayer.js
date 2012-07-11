@@ -8,6 +8,7 @@ exports.retrieveFileInfo = dbFileSystem.retrieveFileInfo;
 exports.deleteFile = dbFileSystem.deleteFile;
 exports.getAllFileInfo = dbFileSystem.getAllFileInfo;
 exports.updateFileInfo = dbFileSystem.updateFileInfo;
+exports.retrieveFileInfoById = dbFileSystem.retrieveFileInfoById;
 
 //Peers
 exports.retrievePeerInfo = dbPeers.retrievePeerInfo;

@@ -94,6 +94,27 @@ function getStatus (req, res){
     }
 }
 
+function checkSum (req, res){
+    try{
+        dao.retrieveFileInfoById(req.body, function(fileInfo){
+           if(fileInfo == null || typeof fileInfo == 'undefined'){
+               res.send(errCodes.ERR_CHECKSUM_FAILED, 400);
+               return;
+           } else{
+               if (fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == req.body[tableProperties.FILESYSTEM_CHECKSUM]){
+                   res.send(errCodes.ERR_CHECKSUM_CORRECT, 200);
+                   return;
+               }else{
+                   res.send(errCodes.ERR_CHECKSUM_FAILED, 400);
+                   return;
+               }
+           }
+        });
+    }catch(err){
+        console.log(errCodes.ERR_CHECKSUM_FAILED);
+        res.send(errCodes.ERR_CHECKSUM_FAILED, 400);
+    }
+}
 
 function test(req, res){
     console.log("testing screen");
@@ -110,4 +131,5 @@ exports.deleteFile = deleteFile;
 exports.write = write;
 exports.test = test;
 exports.getStatus = getStatus;
+exports.checkSum = checkSum;
 //exports.fileReieved = fileReieved;

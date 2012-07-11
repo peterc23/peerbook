@@ -20,6 +20,19 @@ function insertNewFile(fileInfo, callback)
     }
 }
 
+function retrieveFileInfoById(fileInfo, callback){
+    if(fileInfo[tableProperties.FILESYSTEM_ID] == null || typeof fileInfo[tableProperties.FILESYSTEM_ID] == 'undefined'){
+        callback(null);
+        return;
+    }else{
+        client.executeFindSingleQuery('SELECT * FROM ' + tableProperties.FILESYSTEM_TABLE + ' WHERE ' +
+        tableProperties.FILESYSTEM_ID + ' = ?', [fileInfo[tableProperties.FILESYSTEM_ID]], createFileInfoFromSingleResult,
+        function(result){
+           callback(result);
+        });
+    }
+}
+
 function retrieveFileInfo(fileInfo, callback){
     if (fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined' ||
         fileInfo[tableProperties.FILESYSTEM_TIMESTAMP] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined'){
@@ -88,3 +101,4 @@ exports.retrieveFileInfo = retrieveFileInfo;
 exports.deleteFile = deleteFile;
 exports.getAllFileInfo = getAllFileInfo;
 exports.updateFileInfo = updateFileInfo;
+exports.retrieveFileInfoById = retrieveFileInfoById;

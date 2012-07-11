@@ -29,7 +29,7 @@ app.post("/peer/status", writeBackBoneHeaders, peersRequestHandler.getStatus);
 app.post("/file/insert", writeBackBoneHeaders, fileSystemRequestHandler.insertFile);
 app.post("/file/delete", writeBackBoneHeaders, fileSystemRequestHandler.deleteFile);
 app.post("/file/write", writeBackBoneHeaders, fileSystemRequestHandler.write);
-
+app.post("/file/checksum", writeBackBoneHeaders, fileSystemRequestHandler.checkSum);
 app.post("/file/status", writeBackBoneHeaders, fileSystemRequestHandler.getStatus);
 
 app.post("/test", writeBackBoneHeaders, fileSystemRequestHandler.test);

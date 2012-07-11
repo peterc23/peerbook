@@ -25,7 +25,7 @@
       <file leaf-file-name="errorCodes.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/errorCodes.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="26" selection-start="453" selection-end="471" vertical-scroll-proportion="0.0">
+            <state line="8" column="44" selection-start="536" selection-end="536" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -34,7 +34,7 @@
       <file leaf-file-name="index.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="67" selection-start="255" selection-end="255" vertical-scroll-proportion="0.0">
+            <state line="28" column="75" selection-start="953" selection-end="953" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -58,19 +58,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fileSystemRequestHandler.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="fileSystemRequestHandler.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/handlers/fileSystemRequestHandler.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="11" selection-start="1075" selection-end="1075" vertical-scroll-proportion="0.70113313">
+            <state line="26" column="25" selection-start="790" selection-end="790" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dbFileSystem.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="dbFileSystem.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/db/dbFileSystem.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="90" column="40" selection-start="4261" selection-end="4261" vertical-scroll-proportion="0.0">
+            <state line="4" column="9" selection-start="165" selection-end="165" vertical-scroll-proportion="0.08658009">
               <folding />
             </state>
           </provider>
@@ -79,7 +79,7 @@
       <file leaf-file-name="tableProperties.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/tableProperties.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="0" selection-start="439" selection-end="439" vertical-scroll-proportion="0.0">
+            <state line="29" column="42" selection-start="881" selection-end="895" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -88,7 +88,7 @@
       <file leaf-file-name="DAOLayer.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/db/DAOLayer.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="7" selection-start="376" selection-end="376" vertical-scroll-proportion="0.0">
+            <state line="10" column="64" selection-start="432" selection-end="432" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -128,12 +128,12 @@
         <option value="$PROJECT_DIR$/db/dbPeers.js" />
         <option value="$PROJECT_DIR$/resources/tableProperties.js" />
         <option value="$PROJECT_DIR$/handlers/peersRequestHandler.js" />
-        <option value="$PROJECT_DIR$/db/DAOLayer.js" />
-        <option value="$PROJECT_DIR$/db/dbFileSystem.js" />
-        <option value="$PROJECT_DIR$/resources/errorCodes.js" />
-        <option value="$PROJECT_DIR$/handlers/fileSystemRequestHandler.js" />
-        <option value="$PROJECT_DIR$/index.js" />
         <option value="$PROJECT_DIR$/handlers/syncStatusHandler.js" />
+        <option value="$PROJECT_DIR$/index.js" />
+        <option value="$PROJECT_DIR$/resources/errorCodes.js" />
+        <option value="$PROJECT_DIR$/db/dbFileSystem.js" />
+        <option value="$PROJECT_DIR$/db/DAOLayer.js" />
+        <option value="$PROJECT_DIR$/handlers/fileSystemRequestHandler.js" />
       </list>
     </option>
   </component>
@@ -388,30 +388,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/tableProperties.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="439" selection-end="439" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/db/dbPeers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="39" column="0" selection-start="2089" selection-end="2438" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db/dbFileSystem.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="90" column="40" selection-start="4261" selection-end="4261" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db/DAOLayer.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="7" selection-start="376" selection-end="376" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -423,13 +402,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/errorCodes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="26" selection-start="453" selection-end="471" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/handlers/syncStatusHandler.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="22" column="24" selection-start="385" selection-end="385" vertical-scroll-proportion="0.0">
@@ -437,16 +409,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/resources/tableProperties.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="42" selection-start="881" selection-end="895" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/errorCodes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="44" selection-start="536" selection-end="536" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/DAOLayer.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="64" selection-start="432" selection-end="432" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="67" selection-start="255" selection-end="255" vertical-scroll-proportion="0.0">
+        <state line="28" column="75" selection-start="953" selection-end="953" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/handlers/fileSystemRequestHandler.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="11" selection-start="1075" selection-end="1075" vertical-scroll-proportion="0.70113313">
+        <state line="26" column="25" selection-start="790" selection-end="790" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/dbFileSystem.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="9" selection-start="165" selection-end="165" vertical-scroll-proportion="0.08658009">
           <folding />
         </state>
       </provider>
