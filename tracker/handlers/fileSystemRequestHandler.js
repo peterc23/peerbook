@@ -30,7 +30,9 @@ function insertFile (req,res)
                     if(fileInfo == null || typeof fileInfo == 'undefined'){
                         res.send(errCodes.ERR_FILE_NOT_FOUND, 400);
                     } else {
-                        res.send(fileInfo, 200);
+                        var returnObj = {};
+                        returnObj = factory.convertToJava(tableProperties.OBJECT_TYPE_FILE, fileInfo);
+                        res.send(returnObj, 200);
                     }
                 });
         });
