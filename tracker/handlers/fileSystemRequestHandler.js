@@ -1,34 +1,18 @@
 var dao = require('../db/DAOLayer.js');
 var errCodes = require('../resources/errorCodes.js');
-
-
-function read (req,res)
-{
-    try{
-        dao.findAllMenuItemsFromRestaurantId(req.params.restaurantId, function(menuItemList){
-
-            if(menuItemList == null || typeof menuItemList == 'undefined'){
-                res.send(errCodes.ERR_CODE_400, 400);
-            } else {
-                res.send(menuItemList, 200);
-            }
-        });
-    }catch(err){
-        log.error("Error when retrieving Restaurant Menus", err);
-        res.send(errCodes.ERR_CODE_400, 400);
-    }
-}
+var tableProperties = require('../resources/tableProperties.js');
+var factory = require('../utils/objectFactory.js');
 
 function write (req,res)
 {
     try{
-        dao.findAllMenuItemsFromRestaurantId(req.params.restaurantId, function(menuItemList){
+        dao.updateFileInfo(req.body, function(info){
 
-            if(menuItemList == null || typeof menuItemList == 'undefined'){
-                log.info("Retrieve Restaurant Menu null from DB, restaurant Id: ", req.params.restaurantId);
-                res.send(errCodes.ERR_CODE_400, 400);
+            if(info == null || typeof info == 'undefined'){
+                console.log(errCodes.ERR_UPDATING_FILE);
+                res.send(errCodes.ERR_UPDATING_FILE, 400);
             } else {
-                res.send(menuItemList, 200);
+                res.send(errCodes.FILE_WRITE_SUCCESS, 200);
             }
         });
     }catch(err){
@@ -40,7 +24,7 @@ function write (req,res)
 function insertFile (req,res)
 {
     try{
-        dao.insertNewFile(req.params, function(info){
+        dao.insertNewFile(req.body, function(info){
             //TODO: add relationship
                 dao.retrieveFileInfo(req.params, function(fileInfo){
                     if(fileInfo == null || typeof fileInfo == 'undefined'){
@@ -60,7 +44,7 @@ function insertFile (req,res)
 function deleteFile (req,res)
 {
     try{
-        dao.deleteFile(req.params, function(err){
+        dao.deleteFile(req.body, function(err){
             //TODO: delete relationsihps
             if(err == null || typeof err == 'undefined'){
                 res.send("File cannot be found", 400);
@@ -85,6 +69,32 @@ function fileReieved(req, res){
 }
 */
 
+function getStatus (req, res){
+    try{
+        dao.getAllFileInfo(function(fileInfoList){
+            if(fileInfoList == null || typeof fileInfoList == 'undefined'){
+                res.send(errCodes.ERR_CANNOT_RETRIEVE_FILES, 400);
+                return;
+            }else{
+                var returnList = [];
+                for(var i=0; i< fileInfoList.length; i++){
+                        var fileObj = factory.convertToJava(tableProperties.OBJECT_TYPE_FILE, fileInfoList[i]);
+                        returnList.push(fileObj);
+                    }
+                }
+                var returnObj = {};
+                returnObj[tableProperties.OBJECT_FILE_LIST] = returnList;
+                returnObj = factory.convertToJava(tableProperties.OBJECT_TYPE_FILE_LIST, returnObj);
+                res.send(returnObj, 200);
+        });
+    }catch(err){
+        console.log(errCodes.ERR_CANNOT_RETRIEVE_FILES);
+        console.log(err);
+        res.send(errCodes.ERR_CANNOT_RETRIEVE_FILES, 400);
+    }
+}
+
+
 function test(req, res){
     console.log("testing screen");
     console.log(req.body);
@@ -94,9 +104,10 @@ function test(req, res){
     jsonObject.port = "12345";
     res.send(jsonObject, 200);
 }
+
 exports.insertFile = insertFile;
 exports.deleteFile = deleteFile;
-exports.read = read;
 exports.write = write;
 exports.test = test;
+exports.getStatus = getStatus;
 //exports.fileReieved = fileReieved;

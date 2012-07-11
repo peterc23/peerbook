@@ -11,6 +11,7 @@ function join (req,res)
 
         if(typeof peer[tableProperties.PEERS_HOSTNAME] == 'undefiend' || peer[tableProperties.PEERS_PORT] == 'undefined'){
             res.send(errCodes.ERR_PEER_NOT_SPECIFIED, 400);
+            return;
         }else{
             peer[tableProperties.PEERS_STATUS] = tableProperties.PEERS_CONNECTED;
             dao.retrievePeerInfo(peer, function(peerInfo){
@@ -18,12 +19,14 @@ function join (req,res)
                     dao.insertNewPeer(peer, function(err){
                         if (err == null || typeof err == 'undefined'){
                             res.send(errCodes.ERR_PEER_NOT_INSERTED, 400);
+                            return;
                         }else{
                             dao.retrievePeerInfo(peer, function(newPeerInfo){
                                 console.log("AMIGOS");
                                 console.log(newPeerInfo);
                                 var returnObj = factory.convertToJava(tableProperties.OBJECT_TYPE_PEER, newPeerInfo);
                                 res.send(returnObj, 200);
+                                return;
                             });
                         }
                     });
@@ -32,9 +35,11 @@ function join (req,res)
                     dao.updatePeerStatusById(peerInfo, function(newPeerInfo){
                         if (typeof peerInfo == 'undefined' || peerInfo == null){
                             res.send(errCodes.ERR_PEER_NOT_INSERTED, 400);
+                            return;
                         }else{
                             var returnObj = factory.convertToJava(tableProperties.OBJECT_TYPE_PEER, peerInfo);
                             res.send(returnObj, 200);
+                            return;
                         }
                     });
                 }
@@ -55,8 +60,10 @@ function leave (req,res)
 
             if(newPeerInfo == null || typeof newPeerInfo == 'undefined'){
                 res.send(errCodes.ERR_PEER_NOT_SPECIFIED, 400);
+                return;
             } else {
                 res.send("Success", 200);
+                return;
             }
         });
     }catch(err){
@@ -69,6 +76,7 @@ function getStatus (req, res){
         dao.getAllPeerInfo(function(peerInfoList){
            if(peerInfoList == null || typeof peerInfoList == 'undefined'){
                res.send(errCodes.ERR_CANNOT_RETRIEVE_PEERS, 400);
+               return;
            }else{
                var returnList = [];
                for(var i=0; i< peerInfoList.length; i++){
