@@ -24,7 +24,7 @@ function write (req,res)
 function insertFile (req,res)
 {
     try{
-        dao.insertNewFile(req.params, function(info){
+        dao.insertNewFile(req.body, function(info){
             //TODO: add relationship
                 dao.retrieveFileInfo(req.params, function(fileInfo){
                     if(fileInfo == null || typeof fileInfo == 'undefined'){
@@ -44,7 +44,7 @@ function insertFile (req,res)
 function deleteFile (req,res)
 {
     try{
-        dao.deleteFile(req.params, function(err){
+        dao.deleteFile(req.body, function(err){
             //TODO: delete relationsihps
             if(err == null || typeof err == 'undefined'){
                 res.send("File cannot be found", 400);
