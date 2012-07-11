@@ -10,11 +10,11 @@ function insertNewFile(fileInfo, callback)
         callback(null);
     }else{
         client.executeInsertSingleQuery('INSERT INTO ' +
-            tableProperties.FILESYSTEM_TABLE  + '(' + tableProperties.FILESYSTEM_TIMESTAMP + ',' + tableProperties.FILESYSTEM_CHECKSUM +
-            ',' + tableProperties.FILESYSTEM_PATH + ') VALUES (?, ?, ?)',
-            [fileInfo[tableProperties.FILESYSTEM_TIMESTAMP],fileInfo[tableProperties.FILESYSTEM_CHECKSUM],
-                fileInfo[tableProperties.FILESYSTEM_PATH]], function(err) {
-            callback(err);
+            tableProperties.FILESYSTEM_TABLE  + ' ( ' + tableProperties.FILESYSTEM_CHECKSUM +
+            ',' + tableProperties.FILESYSTEM_PATH + ' ) VALUES ( ? , ? )',
+            [fileInfo[tableProperties.FILESYSTEM_CHECKSUM], fileInfo[tableProperties.FILESYSTEM_PATH]],
+            function(err) {
+                callback(err);
         });
     }
 }
@@ -32,15 +32,31 @@ function retrieveFileInfoById(fileInfo, callback){
     }
 }
 
-function retrieveFileInfo(fileInfo, callback){
-    if (fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined'){
+function retrieveFileInfoByPath(fileInfo, callback){
+    if(fileInfo[tableProperties.FILESYSTEM_PATH] == null || typeof fileInfo[tableProperties.FILESYSTEM_PATH] == 'undefined'){
         callback(null);
         return;
     }else{
         client.executeFindSingleQuery('SELECT * FROM ' + tableProperties.FILESYSTEM_TABLE + ' WHERE ' +
-            tableProperties.FILESYSTEM_CHECKSUM + ' = ? AND ' + tableProperties.FILESYSTEM_TIMESTAMP + ' = ?', [fileInfo[tableProperties.FILESYSTEM_CHECKSUM,
-            fileInfo[tableProperties.FILESYSTEM_TIMESTAMP]]], createFileInfoFromSingleResult, function(result){
-            callback(result);
+            tableProperties.FILESYSTEM_PATH + ' = ?', [fileInfo[tableProperties.FILESYSTEM_PATH]], createFileInfoFromSingleResult,
+            function(result){
+                callback(result);
+            });
+    }
+}
+
+function retrieveFileInfo(fileInfo, callback){
+    if (fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined' ||
+        fileInfo[tableProperties.FILESYSTEM_PATH] == null || typeof  fileInfo[tableProperties.FILESYSTEM_PATH] == 'undefined'){
+        callback(null);
+        return;
+    }else{
+        client.executeFindSingleQuery('SELECT * FROM ' + tableProperties.FILESYSTEM_TABLE + ' WHERE ' +
+            tableProperties.FILESYSTEM_CHECKSUM + ' = ? AND ' + tableProperties.FILESYSTEM_PATH + ' = ?',
+            [fileInfo[tableProperties.FILESYSTEM_CHECKSUM],fileInfo[tableProperties.FILESYSTEM_PATH]],
+            createFileInfoFromSingleResult,
+            function(result){
+                callback(result);
         });
     }
 }
@@ -100,3 +116,4 @@ exports.deleteFile = deleteFile;
 exports.getAllFileInfo = getAllFileInfo;
 exports.updateFileInfo = updateFileInfo;
 exports.retrieveFileInfoById = retrieveFileInfoById;
+exports.retrieveFileInfoByPath = retrieveFileInfoByPath;

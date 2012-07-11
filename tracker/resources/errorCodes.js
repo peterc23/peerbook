@@ -7,6 +7,7 @@ exports.ERR_CANNOT_RETRIEVE_FILES = "Cannot retrieve files from DB";
 exports.ERR_UPDATING_FILE = "Cannot update File in DB";
 exports.ERR_CHECKSUM_FAILED = "checksumnotok";
 exports.ERR_CHECKSUM_CORRECT = "checksumok";
+exports.ERR_CHECKSUM_FILE_NOT_FOUND = "filenotexist";
 exports.FILE_WRITE_SUCCESS = "Write Success";
 exports.INVALID_MENU_ITEM = "Invalid Menu Item, check Syntax";
 exports.CANNOT_FIND_FBUSER = "Invalid Token, Check Syntax";

@@ -26,9 +26,8 @@ function insertFile (req,res)
     try{
         dao.insertNewFile(req.body, function(info){
             //TODO: add relationship
-                dao.retrieveFileInfo(req.params, function(fileInfo){
+                dao.retrieveFileInfo(req.body, function(fileInfo){
                     if(fileInfo == null || typeof fileInfo == 'undefined'){
-                        log.info(errCodes.ERR_FILE_NOT_FOUND, req.params.restaurantId);
                         res.send(errCodes.ERR_FILE_NOT_FOUND, 400);
                     } else {
                         res.send(fileInfo, 200);
@@ -94,18 +93,42 @@ function getStatus (req, res){
     }
 }
 
+function getCurrentId (req,res){
+    try{
+        dao.getAllFileInfo(function(fileInfoList){
+            if(fileInfoList == null || typeof fileInfoList == 'undefined'){
+                res.send("1", 200);
+                return;
+            }else{
+                var highestId = 0;
+                for(var i=0; i<fileInfoList.length; i++){
+                    if (fileInfoList[i][tableProperties.FILESYSTEM_ID]> highestId){
+                        highestId = fileInfoList[i][tableProperties.FILESYSTEM_ID];
+                    }
+                }
+                highestId++;
+                res.send(highestId.toString(), 200);
+                return;
+            }
+        });
+    }catch(err){
+        console.log(errCodes.ERR_CANNOT_RETRIEVE_FILES);
+        res.send(errCodes.ERR_CANNOT_RETRIEVE_FILES, 400);
+    }
+}
+
 function checkSum (req, res){
     try{
-        dao.retrieveFileInfoById(req.body, function(fileInfo){
+        dao.retrieveFileInfoByPath(req.body, function(fileInfo){
            if(fileInfo == null || typeof fileInfo == 'undefined'){
-               res.send(errCodes.ERR_CHECKSUM_FAILED, 400);
+               res.send(errCodes.ERR_CHECKSUM_FILE_NOT_FOUND, 200);
                return;
            } else{
                if (fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == req.body[tableProperties.FILESYSTEM_CHECKSUM]){
                    res.send(errCodes.ERR_CHECKSUM_CORRECT, 200);
                    return;
                }else{
-                   res.send(errCodes.ERR_CHECKSUM_FAILED, 400);
+                   res.send(errCodes.ERR_CHECKSUM_FAILED, 200);
                    return;
                }
            }
@@ -132,4 +155,5 @@ exports.write = write;
 exports.test = test;
 exports.getStatus = getStatus;
 exports.checkSum = checkSum;
+exports.getCurrentId = getCurrentId;
 //exports.fileReieved = fileReieved;
