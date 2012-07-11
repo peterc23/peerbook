@@ -32,6 +32,7 @@ app.post("/file/write", writeBackBoneHeaders, fileSystemRequestHandler.write);
 app.post("/file/checksum", writeBackBoneHeaders, fileSystemRequestHandler.checkSum);
 app.post("/file/status", writeBackBoneHeaders, fileSystemRequestHandler.getStatus);
 app.post("/file/currentid", writeBackBoneHeaders, fileSystemRequestHandler.getCurrentId);
+app.post("/file/returnpath", writeBackBoneHeaders, fileSystemRequestHandler.getPath);
 
 app.post("/test", writeBackBoneHeaders, fileSystemRequestHandler.test);
 

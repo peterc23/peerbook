@@ -141,6 +141,25 @@ function checkSum (req, res){
     }
 }
 
+function getPath (req, res){
+    try{
+        dao.retrieveFileInfoById(req.body, function(fileInfo){
+            if(fileInfo == null || typeof fileInfo == 'undefined'){
+                res.send(errCodes.ERR_CANNOT_RETRIEVE_FILES, 400);
+                return;
+            }else{
+                var returnObj = {};
+                returnObj = factory.convertToJava(tableProperties.OBJECT_TYPE_FILE, fileInfo);
+                res.send(returnObj, 200);
+                return;
+            }
+        });
+    }catch(e){
+        console.log(errCodes.ERR_CANNOT_RETRIEVE_FILES);
+        res.send(errCodes.ERR_CANNOT_RETRIEVE_FILES, 400);
+    }
+}
+
 function test(req, res){
     console.log("testing screen");
     console.log(req.body);
@@ -158,4 +177,5 @@ exports.test = test;
 exports.getStatus = getStatus;
 exports.checkSum = checkSum;
 exports.getCurrentId = getCurrentId;
+exports.getPath = getPath;
 //exports.fileReieved = fileReieved;
