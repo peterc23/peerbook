@@ -4,8 +4,7 @@ var tableProperties = require('../resources/tableProperties.js');
 
 function insertNewFile(fileInfo, callback)
 {
-    if (fileInfo[tableProperties.FILESYSTEM_TIMESTAMP] == null || typeof fileInfo[tableProperties.FILESYSTEM_TIMESTAMP] == 'undefined' ||
-        fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined' ||
+    if (fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined' ||
         fileInfo[tableProperties.FILESYSTEM_PATH] == null || typeof fileInfo[tableProperties.FILESYSTEM_PATH] == 'undefined'
 ) {
         callback(null);
@@ -34,8 +33,7 @@ function retrieveFileInfoById(fileInfo, callback){
 }
 
 function retrieveFileInfo(fileInfo, callback){
-    if (fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined' ||
-        fileInfo[tableProperties.FILESYSTEM_TIMESTAMP] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined'){
+    if (fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == null || typeof fileInfo[tableProperties.FILESYSTEM_CHECKSUM] == 'undefined'){
         callback(null);
         return;
     }else{
