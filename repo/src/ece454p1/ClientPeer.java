@@ -105,7 +105,7 @@ public class ClientPeer extends Peer implements MessageListener{
 	}
 
 	@Override
-	public int insert(String filename, Status status) {
+	public int insert(String filename, int id, String fullRelativePath) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

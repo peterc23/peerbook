@@ -16,13 +16,35 @@ public class FilePostObject {
 	public String checksum;
 	
 	@JsonProperty
-	public boolean editing;
+	public String editing;
+	
+	@JsonProperty
+	public String path;
+	
+	public FilePostObject() {
+		
+	}
+	public FilePostObject(int id, String timestamp, String checksum, String editing, String path) {
+		this.id = id;
+		this.timestamp = timestamp;
+		this.checksum = checksum;
+		this.editing = editing;
+		this.path = path;
+	}
 	
 	public FilePostObject(int id, String checksum) {
 		this.id = id;
 		this.timestamp = null;
 		this.checksum = checksum;
-		this.editing = false;
+		this.editing = null;
+		this.path = null;
 	}
 	
+	public FilePostObject(String checksum, String path) {
+		this.id = -1;
+		this.timestamp = null;
+		this.checksum = checksum;
+		this.path = path;
+		this.editing = null;
+	}
 }

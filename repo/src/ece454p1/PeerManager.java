@@ -98,7 +98,7 @@ public class PeerManager {
 			ArrayList<HeaderFile> myheaders = FileUtils.getHeaderFiles();
 			if (myheaders != null && myheaders.size() > 0) {
 				
-				// combine files
+				// combine chunks files
 				for(int i=0; i< myheaders.size(); i++){
 					int chunkCount = myheaders.get(i).localChunksPresent.length;
 					int count = 0;

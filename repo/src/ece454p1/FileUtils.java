@@ -116,6 +116,7 @@ public class FileUtils {
 		try {
 			result = oMapper.readValue(json, t);
 		} catch (Exception e) {
+			System.out.println(e);
 		}
 		return result;
 	}
@@ -195,6 +196,32 @@ public class FileUtils {
 	}
 	
 	//Call generateHeaderFile on insert.
+	public static File generateHeaderFile(File file, ArrayList<File> fileList, int id){
+		
+		File returnFile = new File(file.getAbsolutePath() +Config.HEADER_FILE_EXT);
+		Writer output = null;
+		HeaderFile headFile = new HeaderFile();
+		ObjectMapper oMapper = new ObjectMapper();
+		
+		
+		headFile.localChunksPresent = new boolean[fileList.size()];
+		for(int i=0; i<fileList.size(); i++){
+			headFile.localChunksPresent[i] = true;
+		}
+		headFile.fileId = id;
+		
+
+		try {
+			output = new BufferedWriter(new FileWriter(returnFile));
+			output.write(oMapper.writeValueAsString(headFile));
+			output.close();
+		} catch (Exception e) {
+			System.out.println("generateHeaderFile");
+			System.out.println(e);
+		}
+		 return returnFile;
+	}
+
 	public static File generateHeaderFile(File file, ArrayList<File> fileList, Status status){
 		
 		File returnFile = new File(file.getAbsolutePath() +Config.HEADER_FILE_EXT);
@@ -421,6 +448,26 @@ public class FileUtils {
 			}
 		}
 		return file;
+	}
+	
+	public static synchronized void updateHeaderFileId(String absolutePath, int id) {
+		ObjectMapper oMapper = new ObjectMapper();
+		File file = new File(absolutePath);
+		if (!file.exists()) return;
+		
+		HeaderFile headFile = null;
+		Writer output = null;
+		headFile = readHeaderFile(file);
+		
+		headFile.fileId = id;
+		try {
+			output = new BufferedWriter(new FileWriter(file));
+			output.write(oMapper.writeValueAsString(headFile));
+			output.close();
+		} catch (Exception e) {
+			System.out.println("output header file");
+			System.out.println(e);
+		}
 	}
 	
 	public static synchronized void updateHeaderFileForWrite(String relativePath, HeaderFile file, ArrayList<File> chunks) {

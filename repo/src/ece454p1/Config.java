@@ -9,6 +9,7 @@ public class Config {
 	public static final int MAX_FILES = 100;
 	
 	public static final String SHARE_PATH = "./bitTorrent/";
+	public static final String ROOT_PATH = "./root/";
 	
 	public static final String HEADER_FILE_EXT = ".torrent";	
 	
@@ -23,6 +24,9 @@ public class Config {
 	public static final String SERVER_SYNC_STATUS = "/sync/status";
 	public static final int SYNC_TRY_COUNT = 3;
 	
-	public static final String SERVER_CHECKSUM = "/file/write";
-
+	public static final String SERVER_WRITE_CHECKSUM = "/file/write";
+	public static final String SERVER_FILE_INSERT = "/file/insert";
+	public static final String SERVER_CHECKSUM = "/file/checksum";
+	public static final String SERVER_CURRENT_ID = "/file/currentid";
+	public static final String SERVER_RETURN_PATH = "/file/returnpath";
 }

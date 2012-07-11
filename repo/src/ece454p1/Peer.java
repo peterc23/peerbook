@@ -8,7 +8,7 @@ public abstract class Peer {
 	// This is the formal interface and you should follow it
 	public abstract int insert(String filename);
 	
-	public abstract int insert(String filename, Status status);
+	public abstract int insert(String filename, int id, String fullRelativePath);
 
 	public abstract int query(Status status);
 

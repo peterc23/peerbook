@@ -13,7 +13,6 @@ public class ServerPeer extends Peer{
 	
 	private ServerSocket socket;
 	private ArrayList<ServerWorker> clients;
-	private final String sharePath = "./bitTorrent/";
 	private Thread t = null;
 	private boolean isStopped;
 	
@@ -170,7 +169,7 @@ public class ServerPeer extends Peer{
 		ArrayList<FileInfo> returnList = new ArrayList<FileInfo>();
 		String result = null;
 		
-		File folder = new File(sharePath);
+		File folder = new File(Config.SHARE_PATH);
 		File[] listOfFiles = folder.listFiles();
 		if (listOfFiles == null) return null;
 		
@@ -194,37 +193,38 @@ public class ServerPeer extends Peer{
 	}
 	
 	@Override
-	public int insert(String filename, Status status) {
+	public int insert(String filename, int id, String fullRelativePath) {
+		if (fullRelativePath.startsWith("/")) {
+			fullRelativePath = fullRelativePath.substring(1);
+		}
+		String absolutePath = Config.SHARE_PATH + fullRelativePath;
 		File srcFile = new File(filename);
-		File destFile = new File(sharePath+srcFile.getName());
+		File destFile = new File(absolutePath);
+		destFile.getParentFile().mkdirs();
 		if (destFile.exists()){
 			System.out.println("This file name already exsists");
 			return ReturnCodes.ERR_FILE_EXISTS;
 		}else{
-			if(status.numFiles > Config.MAX_FILES){
-				return ReturnCodes.ERR_SYSTEM_FULL;
-			}else{
-				try {
-					InputStream in = new FileInputStream(srcFile);
-					OutputStream out = new FileOutputStream(destFile);
-					byte [] buff = new byte[1024];
-					int length;
-					while((length = in.read(buff)) > 0){
-						out.write(buff, 0, length);
-					}
-					in.close();
-					out.close();
-				} catch (Exception e) {
-					System.out.println(e);
-					return -1;
+			try {
+				InputStream in = new FileInputStream(srcFile);
+				OutputStream out = new FileOutputStream(destFile);
+				byte [] buff = new byte[1024];
+				int length;
+				while((length = in.read(buff)) > 0){
+					out.write(buff, 0, length);
 				}
-				
-				//PeerManager.getManager().notifyNewFile(destFile);		
-				ArrayList<File> files = FileUtils.divideFiles(destFile);
-				FileUtils.generateHeaderFile(destFile, files, status);
-				PeerManager.getManager().poke();
-				return 0;
+				in.close();
+				out.close();
+			} catch (Exception e) {
+				System.out.println(e);
+				return -1;
 			}
+			
+			//PeerManager.getManager().notifyNewFile(destFile);		
+			ArrayList<File> files = FileUtils.divideFiles(destFile);
+			FileUtils.generateHeaderFile(destFile, files, id);
+			PeerManager.getManager().poke();
+			return 0;
 		}
 	}
 	

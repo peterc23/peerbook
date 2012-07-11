@@ -9,6 +9,70 @@ import java.util.ArrayList;
 
 public class main{
 	
+	public static ServerPeer serverPeer = null;
+	
+	public static void versionCheck() {
+		versionCheck(Config.SHARE_PATH, "/");
+	}
+	
+	public static void versionCheck(String absolutePath, String relativePath) {
+
+		HttpRequest.postServer(Config.SERVER_STOP_SYNC, null);
+		
+		File folder = new File(absolutePath);
+		File[] files = folder.listFiles();
+		for (File file : files) {
+			if (file.isFile()) {
+				if (file.getName().endsWith(".torrent")) {
+					String fileName = file.getName().substring(0, file.getName().length()-8);
+					String fullRelativePath = relativePath + fileName;
+					String result = HttpRequest.postServer(Config.SERVER_CHECKSUM, new FilePostObject(MD5Checksum.getMD5Checksum(absolutePath+fileName), fullRelativePath));
+					if ("filenotexist".equals(result)) {
+						// update file with new file id
+						String response = HttpRequest.postServer(Config.SERVER_FILE_INSERT, new FilePostObject(MD5Checksum.getMD5Checksum(absolutePath+fileName), fullRelativePath));
+						FilePostObject fileObject = (FilePostObject)FileUtils.mapToObject(response, FilePostObject.class);
+						if (fileObject != null) FileUtils.updateHeaderFileId(absolutePath+file.getName(), fileObject.id);
+					} else if (!"checksumok".equals(result)) {
+						System.out.println("Versioning Conflict: there is a conflict between file='"+fullRelativePath+"'");
+						System.out.print("Please choose (tc) or (mc): ");
+						boolean mc = false;
+						while (true) {
+							BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+							String input = null;
+							try {
+								input = br.readLine();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							if (input != null && input.equals("tc")) {
+								mc = false;
+								break;
+							} else if (input != null && input.equals("mc")) {
+								mc = true;
+								break;
+							} else {
+								System.out.print("Please choose (tc) or (mc): ");
+							}
+						}
+						if (mc) {
+							// delete their files
+							serverPeer.broadCastAction(new Action(Action.ActionType.deleteFile, fullRelativePath));
+						} else {
+							// delete the torrent file on my system
+							FileUtils.deleteTorrentAndFiles(absolutePath+file.getName());
+						}
+					} else {
+						// don't do anything, file is correct
+					}
+				}
+			} else {
+				versionCheck(absolutePath+file.getName()+"/", relativePath+file.getName()+"/");
+			}
+		}
+		
+		HttpRequest.postServer(Config.SERVER_START_SYNC, null);
+	}
+	
 	public static void main(String[] args) {
 		if (args.length <= 1) {
 			System.out.println("Need to pass hostname and port as arguments");
@@ -19,7 +83,7 @@ public class main{
 		String port = args[1];
 		
 		// start server
-		ServerPeer serverPeer = new ServerPeer(host, port);
+		serverPeer = new ServerPeer(host, port);
 		//serverPeer.start(); // NEED TO REMOVE THIS
 		
 		// start peer manager
@@ -61,41 +125,65 @@ public class main{
 						if (fileOpen == null) {
 							System.out.println("Warning: you cannot close a file that hasn't been opened");
 						} else {
-							int tryCount = 0;
-							while (tryCount < Config.SYNC_TRY_COUNT) {
-								HttpRequest.postServer(Config.SERVER_STOP_SYNC, null);
-								if ("notok".equals(HttpRequest.postServer(Config.SERVER_SYNC_STATUS, null))) {
-									// tell other peers to delete this file
-									serverPeer.broadCastAction(new Action(Action.ActionType.deleteFile, fileRelativePath));
+							// offline mode
+							if (peerPost == null) {
+								// update this file
+								File oldFile = new File(fileOpen);
+								if (oldFile.delete()) {
+									// write string to file
+									FileUtils.writeFile(fileOpen, fileContent.toString());
 									
-									// update server checksum
+									// delete the chunks and update header file
 									HeaderFile torrent = FileUtils.readHeaderFile(new File(fileOpen+Config.HEADER_FILE_EXT));
-									FilePostObject postInfo = new FilePostObject(torrent.fileId, MD5Checksum.getMD5Checksum(fileOpen));
-									HttpRequest.postServer(Config.SERVER_CHECKSUM, postInfo);
+									FileUtils.deleteChuckFiles(fileOpen);
+									ArrayList<File> files = FileUtils.divideFiles(new File(fileOpen));
+									FileUtils.updateHeaderFileForWrite(fileRelativePath, torrent, files);
 									
-									// update this file
-									File oldFile = new File(fileOpen);
-									if (oldFile.delete()) {
-										// write string to file
-										FileUtils.writeFile(fileOpen, fileContent.toString());
-										
-										// delete the chunks and update header file
-										FileUtils.deleteChuckFiles(fileOpen);
-										ArrayList<File> files = FileUtils.divideFiles(new File(fileOpen));
-										FileUtils.updateHeaderFileForWrite(fileRelativePath, torrent, files);
-										
-										// reset 
-										fileRelativePath = null;
-										fileOpen = null;
-										fileContent = null;
-										
-										System.out.println("File closed: " + fileOpen);
-										break;
-									}
+									// reset 
+									fileRelativePath = null;
+									fileOpen = null;
+									fileContent = null;
+									
+									System.out.println("File closed");
 								}
-								tryCount++;
+							// online mode
+							} else {
+								int tryCount = 0;
+								while (tryCount < Config.SYNC_TRY_COUNT) {
+									HttpRequest.postServer(Config.SERVER_STOP_SYNC, null);
+									if ("notok".equals(HttpRequest.postServer(Config.SERVER_SYNC_STATUS, null))) {
+										// tell other peers to delete this file
+										serverPeer.broadCastAction(new Action(Action.ActionType.deleteFile, fileRelativePath));
+										
+										// update server checksum
+										HeaderFile torrent = FileUtils.readHeaderFile(new File(fileOpen+Config.HEADER_FILE_EXT));
+										FilePostObject postInfo = new FilePostObject(torrent.fileId, MD5Checksum.getMD5Checksum(fileOpen));
+										HttpRequest.postServer(Config.SERVER_WRITE_CHECKSUM, postInfo);
+										
+										// update this file
+										File oldFile = new File(fileOpen);
+										if (oldFile.delete()) {
+											// write string to file
+											FileUtils.writeFile(fileOpen, fileContent.toString());
+											
+											// delete the chunks and update header file
+											FileUtils.deleteChuckFiles(fileOpen);
+											ArrayList<File> files = FileUtils.divideFiles(new File(fileOpen));
+											FileUtils.updateHeaderFileForWrite(fileRelativePath, torrent, files);
+											
+											// reset 
+											fileRelativePath = null;
+											fileOpen = null;
+											fileContent = null;
+											
+											System.out.println("File closed");
+											break;
+										}
+									}
+									tryCount++;
+								}
+								HttpRequest.postServer(Config.SERVER_START_SYNC, null);
 							}
-							HttpRequest.postServer(Config.SERVER_START_SYNC, null);
 						}
 					} else if (input.startsWith("read")) {
 						if (fileContent == null) {
@@ -134,6 +222,10 @@ public class main{
 					} else if(input.equalsIgnoreCase("query")){
 						serverPeer.query(status);
 					} else if (input.equalsIgnoreCase("join")) {
+						// check all directories and see if there is any versioning conflicts
+						versionCheck();
+						
+						// start the peer connection
 						serverPeer.start(); 
 						PeerManager.getManager().start();
 						peerPost = new PeerPostObject(serverPeer.hostname, serverPeer.port);
@@ -148,14 +240,32 @@ public class main{
 							//serverPeer.stop(); 
 						}
 					} else if (input.startsWith("insert")) {
-						if (serverPeer.query(status) == ReturnCodes.ERR_NO_PEERS_FOUND) {
-							System.out.println("You must join first before querying status");
-						} else { 
-							String [] file = input.split(" ");
-							serverPeer.insert(file[1], status);
+						String [] file = input.split(" ");
+						if (file.length == 3) {
+							File insertFile = new File(file[1]);
+							if (insertFile.isFile()) {
+								String relativePath = file[2];
+								if (!relativePath.startsWith("/")) {
+									relativePath = "/"+relativePath;
+								}
+								if (!relativePath.endsWith("/")) {
+									relativePath = relativePath + "/";
+								}
+								relativePath += insertFile.getName();
+								FilePostObject fileObject = null;
+								if (peerPost != null) {
+									String result = HttpRequest.postServer(Config.SERVER_FILE_INSERT, new FilePostObject(MD5Checksum.getMD5Checksum(file[1]), relativePath));
+									fileObject = (FilePostObject)FileUtils.mapToObject(result, FilePostObject.class);
+									serverPeer.insert(file[1], fileObject.id, relativePath);
+								} else {
+									serverPeer.insert(file[1], 0, relativePath);
+								}
+							} else {
+								System.out.println("Warning: you must specify a file as the absolute path argument");
+							}
+						} else {
+							System.out.println("Warning: you must have the file path and the relative path as arguments");
 						}
-						//TODO: NEED TO UPDATE HEADER FILE ID RIGHT BEFORE SENDING IT OUT
-						
 					} else if (input.startsWith("file")) {
 						ArrayList<File> flist = new ArrayList<File>();
 						for (int i=1; i<=9; i++){
