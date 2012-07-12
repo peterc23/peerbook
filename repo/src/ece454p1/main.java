@@ -10,9 +10,27 @@ import java.util.ArrayList;
 public class main{
 	
 	public static ServerPeer serverPeer = null;
+	public static PeerPostObject peerPost = null;
 	
 	public static void versionCheck() {
 		versionCheck(Config.SHARE_PATH, "/");
+	}
+	
+	public static void join() {
+		if (peerPost == null) {
+			// start the peer connection
+			serverPeer.start(); 
+			PeerManager.getManager().start();
+			peerPost = new PeerPostObject(serverPeer.hostname, serverPeer.port);
+			peerPost = (PeerPostObject)FileUtils.mapToObject(HttpRequest.postServer(Config.SERVER_PEER_JOIN, peerPost), PeerPostObject.class);
+		}
+	}
+	
+	public static void updateCheckSum(String absolutePath) {
+		// update server checksum
+		HeaderFile torrent = FileUtils.readHeaderFile(new File(absolutePath+Config.HEADER_FILE_EXT));
+		FilePostObject postInfo = new FilePostObject(torrent.fileId, MD5Checksum.getMD5Checksum(absolutePath));
+		HttpRequest.postServer(Config.SERVER_WRITE_CHECKSUM, postInfo);
 	}
 	
 	public static void versionCheck(String absolutePath, String relativePath) {
@@ -26,6 +44,8 @@ public class main{
 				if (file.getName().endsWith(".torrent")) {
 					String fileName = file.getName().substring(0, file.getName().length()-8);
 					String fullRelativePath = relativePath + fileName;
+					File actualFile = new File(absolutePath+fileName);
+					if (!actualFile.exists()) continue;
 					String result = HttpRequest.postServer(Config.SERVER_CHECKSUM, new FilePostObject(MD5Checksum.getMD5Checksum(absolutePath+fileName), fullRelativePath));
 					if ("filenotexist".equals(result)) {
 						// update file with new file id
@@ -55,11 +75,17 @@ public class main{
 							}
 						}
 						if (mc) {
+							// update checksum
+							updateCheckSum(absolutePath+fileName);
+							
 							// delete their files
+							join();
 							serverPeer.broadCastAction(new Action(Action.ActionType.deleteFile, fullRelativePath));
 						} else {
 							// delete the torrent file on my system
-							FileUtils.deleteTorrentAndFiles(absolutePath+file.getName());
+							String actualFileName = relativePath+file.getName();
+							actualFileName = actualFileName.substring(0, actualFileName.lastIndexOf("."));
+							FileUtils.deleteTorrentAndFiles(actualFileName);
 						}
 					} else {
 						// don't do anything, file is correct
@@ -94,7 +120,6 @@ public class main{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = null;
 		ConcreteStatus status = new ConcreteStatus();
-		PeerPostObject peerPost = null;
 		
 		String fileRelativePath = null;
 		String fileOpen = null;
@@ -225,11 +250,8 @@ public class main{
 						// check all directories and see if there is any versioning conflicts
 						versionCheck();
 						
-						// start the peer connection
-						serverPeer.start(); 
-						PeerManager.getManager().start();
-						peerPost = new PeerPostObject(serverPeer.hostname, serverPeer.port);
-						peerPost = (PeerPostObject)FileUtils.mapToObject(HttpRequest.postServer(Config.SERVER_PEER_JOIN, peerPost), PeerPostObject.class);
+						// join
+						join();
 					} else if (input.equalsIgnoreCase("leave")) {
 						if (peerPost == null) {
 							System.out.println("Warning: you cannot leave before joining");

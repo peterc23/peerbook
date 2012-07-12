@@ -26,6 +26,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class FileUtils {
 
+	public static String getAbsolutePath(String fullRelativePath) {
+		String path = fullRelativePath;
+		if (path.startsWith("/")) {
+			path = path.substring(1);
+		}
+		path = Config.SHARE_PATH + path;
+		return path;
+	}
 	public static void deleteChuckFiles(String absolutePath) {
 		int pos = absolutePath.lastIndexOf('/') + 1;
 		String filename = absolutePath.substring(pos);
@@ -250,31 +258,38 @@ public class FileUtils {
 	}
 	
 	public static synchronized ArrayList<HeaderFile> getHeaderFiles() {
-		File file = new File(Config.SHARE_PATH);
+		return getHeaderFiles(Config.SHARE_PATH, "/");
+	}
+	public static synchronized ArrayList<HeaderFile> getHeaderFiles(String absolutePath, String fullRelativePath) {
+		File file = new File(absolutePath);
 		File [] fileList = file.listFiles();
 		ArrayList<HeaderFile> files = new ArrayList<HeaderFile>();
 
 		for (int i=0; i< fileList.length; i++){
-			HeaderFile headFile = FileUtils.readHeaderFile(fileList[i]);	
-			if(headFile != null){
-				files.add(headFile);
+			if (fileList[i].isFile()) {
+				HeaderFile headFile = FileUtils.readHeaderFile(fileList[i]);	
+				if(headFile != null){
+					headFile.fullRelativePath = fullRelativePath+fileList[i].getName();
+					files.add(headFile);
+				}
+			} else {
+				ArrayList<HeaderFile> subFiles = getHeaderFiles(fileList[i].getAbsolutePath()+"/", fullRelativePath+fileList[i].getName()+"/");
+				if (subFiles != null) {
+					files.addAll(subFiles);
+				}
 			}
 		}
 		return files;
 	}
 	
-	public static String getHeadPathFromId(int fileId) {
-		File folder = new File(Config.SHARE_PATH);
-		File[] files = folder.listFiles();
-		for (File file : files) {
-			HeaderFile headfile = readHeaderFile(file);
-			if (headfile != null && headfile.fileId == fileId){
-				String fileName = file.getName();
-				int pos = fileName.lastIndexOf('.');
-				String result = Config.SHARE_PATH+fileName.substring(0, pos)+Config.HEADER_FILE_EXT;
-				return result;
+	public static String getHeadPathFromId(ArrayList<HeaderFile> headers, int fileId) {
+		
+		for (HeaderFile head : headers) {
+			if (head.fileId == fileId) {
+				return head.fullRelativePath;
 			}
 		}
+		
 		return null;
 	}
 	
@@ -293,16 +308,12 @@ public class FileUtils {
 		return null;
 	}
 	
-	public static String getChunkPathFromId(int headId, int chunk) {
-		File folder = new File(Config.SHARE_PATH);
-		File[] files = folder.listFiles();
-		for (File file : files) {
-			HeaderFile headfile = readHeaderFile(file);
-			if (headfile != null && headfile.fileId == headId){
-				String fileName = file.getName();
-				int pos = fileName.lastIndexOf('.');
-				String result = Config.SHARE_PATH+fileName.substring(0, pos)+".part"+chunk;
-				return result;
+	public static String getChunkPathFromId(ArrayList<HeaderFile> headers, int headId, int chunk) {
+		for (HeaderFile head : headers) {
+			if (head.fileId == headId) {
+				int pos = head.fullRelativePath.lastIndexOf('.');
+				String result = head.fullRelativePath.substring(0, pos)+".part"+chunk;
+				return result; 
 			}
 		}
 		return null;
@@ -399,26 +410,25 @@ public class FileUtils {
 	}
 	
 	public synchronized static File updateChunkToHeaderFile(File chunkFile) {
-		String chunkName = chunkFile.getName();
-		int dot = chunkName.lastIndexOf(".");
-		StringBuilder path = new StringBuilder(Config.SHARE_PATH);
-		path.append(chunkName.substring(0, dot));
+		String chunkPath = chunkFile.getPath();
+		int dot = chunkPath.lastIndexOf(".");
+		StringBuilder path = new StringBuilder(chunkPath.substring(0, dot));
 		path.append(Config.HEADER_FILE_EXT);
 		File abc = new File (path.toString());
 		return updateHeaderFile(abc);
 		
 	}
 	
-	public static synchronized File downloadAndCleanHeaderFile(InputStream is, int size, String filename) {
+	public static synchronized File downloadAndCleanHeaderFile(InputStream is, int size, String fullRelativePath) {
 		// download header file
-		File file = FileUtils.saveFileFromByte(is, size, filename);
+		File file = FileUtils.saveFileFromByte(is, size, fullRelativePath);
 		// update header file
 	    FileUtils.updateHeaderFile(file);
 	    
 	    return file;
 	}
 	
-	public static File saveFileFromByte(InputStream is, int size, String filename) {
+	public static File saveFileFromByte(InputStream is, int size, String fullRelativePath) {
 		File file = null;
 		FileOutputStream os = null;
 		BufferedOutputStream bos = null;
@@ -430,7 +440,8 @@ public class FileUtils {
 			  bytesRead = is.read(bytearray, current, bytearray.length-current);
 			  if (bytesRead >= 0) current += bytesRead;
 		  } while (bytesRead > 0);
-		  file = new File(Config.SHARE_PATH+filename);
+		  file = new File(FileUtils.getAbsolutePath(fullRelativePath));
+		  if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
 		  os = new FileOutputStream(file);
 		  bos = new BufferedOutputStream(os);
 		  bos.write(bytearray, 0, bytearray.length);
@@ -501,18 +512,18 @@ public class FileUtils {
 	// takes in torrent file
 	public static synchronized File updateHeaderFile(File file){
 		ObjectMapper oMapper = new ObjectMapper();
-		File returnFile = new File(file.getAbsolutePath());
+		File returnFile = new File(file.getPath());
 		HeaderFile headFile = null;
 		Writer output = null;
 		
 		headFile = readHeaderFile(file);
 		int pos = file.getName().lastIndexOf('.');
-		String partsname = file.getName().substring(0, pos-1);
+		String partsname = file.getName().substring(0, pos);
 		
 		for(int i=0; i< headFile.localChunksPresent.length; i++){
 			headFile.localChunksPresent[i] = false;
 		}
-		File folder = new File(Config.SHARE_PATH);
+		File folder = file.getParentFile();
 		File [] listOfFiles = folder.listFiles();
 		if (listOfFiles == null) return file;
 		

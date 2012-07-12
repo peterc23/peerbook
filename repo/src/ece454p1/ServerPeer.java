@@ -169,18 +169,13 @@ public class ServerPeer extends Peer{
 		ArrayList<FileInfo> returnList = new ArrayList<FileInfo>();
 		String result = null;
 		
-		File folder = new File(Config.SHARE_PATH);
-		File[] listOfFiles = folder.listFiles();
-		if (listOfFiles == null) return null;
-		
-		for(int i=0; i<listOfFiles.length; i++){
-			if (FileUtils.isHeaderFile(listOfFiles[i])){
-				HeaderFile headFile = FileUtils.readHeaderFile(listOfFiles[i]);
-				FileInfo returnFile = new FileInfo();
-				returnFile.headFile = headFile;
-				returnList.add(returnFile);
-			}
+		ArrayList<HeaderFile> headerFiles = FileUtils.getHeaderFiles();
+		for (HeaderFile headFile : headerFiles) {
+			FileInfo returnFile = new FileInfo();
+			returnFile.headFile = headFile;
+			returnList.add(returnFile);
 		}
+		
 		try {
 			Files resultFile = new Files();
 			resultFile.filesList = returnList;

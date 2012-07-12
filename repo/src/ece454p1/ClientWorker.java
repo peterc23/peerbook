@@ -53,10 +53,11 @@ public class ClientWorker implements Runnable {
 		if (messageQueue.size() == 1) this.notify();
 	}
 	
-	public synchronized void sendFile(String filePath) {
+	public synchronized void sendFile(String fullRelativePath, String filePath) {
 		MessageTransport transport = new MessageTransport();
 		transport.isHeader = FileUtils.isHeaderFile(new File(filePath)); 
 		transport.isFile = true;
+		transport.fullRelativePath = fullRelativePath;
 		transport.filePath = filePath;
 		messageQueue.add(transport);
 		if (messageQueue.size() == 1) this.notify();
@@ -169,7 +170,7 @@ public class ClientWorker implements Runnable {
 		    		  if (message.filePath == null) continue;
 		    		  file = new File(message.filePath);
 		    		  if (!file.exists()) continue;
-		    		  out.println("header101,"+(int)file.length()+","+file.getName());
+		    		  out.println("header101,"+(int)file.length()+","+message.fullRelativePath);
 		    		  String abc = in.readLine();
 		    		  if (abc.equals("ok101")) {
 		    			  writeFileToStream(file, os);
@@ -181,7 +182,7 @@ public class ClientWorker implements Runnable {
 		    		  if (message.filePath == null) continue;
 		    		  file = new File(message.filePath);
 		    		  if (!file.exists()) continue;
-		    		  out.println("txt101,"+(int)file.length()+","+file.getName());
+		    		  out.println("txt101,"+(int)file.length()+","+message.fullRelativePath);
 		    		  String abc = in.readLine();
 		    		  
 		    		  if (abc.equals("no101")) {

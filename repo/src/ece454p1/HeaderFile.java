@@ -12,10 +12,14 @@ public class HeaderFile {
 	@JsonProperty
 	public boolean [] localChunksPresent;
 	
+	@JsonProperty 
+	public String fullRelativePath;
+	
 	public HeaderFile copy() {
 		HeaderFile file = new HeaderFile();
 		file.fileId = this.fileId;
 		file.localChunksPresent = this.localChunksPresent;
+		file.fullRelativePath = this.fullRelativePath;
 		return file;
 	}
 	

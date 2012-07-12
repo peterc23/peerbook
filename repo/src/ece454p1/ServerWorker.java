@@ -98,7 +98,7 @@ public class ServerWorker implements Runnable{
 	    		  break;
 	    	  } else if (message.equals("checkconnection")) {
 	    		  out.println("IamConnected");
-	    	  } else if (message.matches("header101,[\\d]+,[a-zA-Z.\\d-_]+")) {
+	    	  } else if (message.matches("header101,[\\d]+,[a-zA-Z.\\d-_/]+")) {
 	    		  String [] messageArray = message.split(",");
 	    		  out.println("ok101");
 	    		  // download header file and clean
@@ -106,7 +106,7 @@ public class ServerWorker implements Runnable{
 	    		  // handle request and get response
 	    		  response = peer.onClientRequest(null, file);
 	    		  out.println(response);
-	    	  } else if (message.matches("txt101,[\\d]+,[a-zA-Z.\\d-_]+")) {
+	    	  } else if (message.matches("txt101,[\\d]+,[a-zA-Z.\\d-_/]+")) {
 	    		  String[] messagearray = message.split(",");
 	    		  out.println("ok101");
 	    		  ChunkInfo info = PeerManager.getChunkInfoFromFileName(messagearray[2]);
@@ -129,7 +129,7 @@ public class ServerWorker implements Runnable{
 	    	  }
 	    	  
 	       }catch (Exception e) {
-	    	System.out.println(e);
+	    	e.printStackTrace();
 	        System.out.println("Write failed");
 	       }
 	    }

@@ -87,6 +87,7 @@ public class PeerManager {
 	}
 	
 	public void runInBackground() {
+
 		Status status = new ConcreteStatus();
 		while (true) {
 			// work lock
@@ -107,7 +108,8 @@ public class PeerManager {
 							count++;
 						}
 					}
-					String filename = FileUtils.getFileNameFromId(myheaders.get(i).fileId);
+					int pos = myheaders.get(i).fullRelativePath.lastIndexOf('.');
+					String filename = FileUtils.getAbsolutePath(myheaders.get(i).fullRelativePath.substring(0, pos));
 					if(filename != null){
 						File destFile = new File(filename);
 						if (count == chunkCount && !destFile.exists()){
@@ -144,7 +146,6 @@ public class PeerManager {
 						}
 						headerMap.put(head.fileId, false);
 					}
-				
 					
 					ClientPeer client = null;
 					ArrayList<HeaderFile> tempHead = null;
@@ -167,7 +168,7 @@ public class PeerManager {
 						tempHead = status.headerfiles.get(client.getSocket());
 						if(tempHead == null || tempHead.size() <= 0) { 
 							// just send the first header file in my computer if client doesn't have any
-							client.sendFile(FileUtils.getHeadPathFromId(myheaders.get(0).fileId), false);
+							client.sendFile(myheaders.get(0).fullRelativePath, FileUtils.getAbsolutePath(myheaders.get(0).fullRelativePath), false);
 							continue;
 						} else {
 							// check which header files the client doesn't have
@@ -178,7 +179,8 @@ public class PeerManager {
 							for (Integer fileId : headerMap.keySet()){
 								if(!headerMap.get(fileId).booleanValue()) {
 									headFlag = true;
-									client.sendFile(FileUtils.getHeadPathFromId(fileId), false);
+									String fullRelativePath = FileUtils.getHeadPathFromId(myheaders, fileId);
+									client.sendFile(fullRelativePath, FileUtils.getAbsolutePath(fullRelativePath), false);
 								}
 							}
 							if(headFlag == true) continue;
@@ -216,7 +218,8 @@ public class PeerManager {
 							// send least replicated file
 							if (resultInfo != null) {
 								info.fromString(resultInfo);
-								client.sendFile(FileUtils.getChunkPathFromId(info.headId, info.chunk+1), false);
+								String chunkRelativePath = FileUtils.getChunkPathFromId(myheaders, info.headId, info.chunk+1);
+								client.sendFile(chunkRelativePath, FileUtils.getAbsolutePath(chunkRelativePath), false);
 							}
 						}
 					}
@@ -256,8 +259,7 @@ public class PeerManager {
 		
 		// get header id
 		StringBuilder path = new StringBuilder();
-		path.append(Config.SHARE_PATH);
-		path.append(filename);
+		path.append(FileUtils.getAbsolutePath(filename));
 		path.append(Config.HEADER_FILE_EXT);
 		HeaderFile header = FileUtils.readHeaderFile(new File(path.toString()));
 		int headerid = header.fileId;

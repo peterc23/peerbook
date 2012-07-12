@@ -48,10 +48,10 @@ public class ClientPeer extends Peer implements MessageListener{
 		}
 	}
 	
-	public String sendFile(String filePath, boolean block) {
+	public String sendFile(String fullRelativePath, String absolutePath, boolean block) {
 		synchronized (lock) {
 			isSending = true;
-			worker.sendFile(filePath);
+			worker.sendFile(fullRelativePath, absolutePath);
 			try {
 				if (block) lock.wait();
 			} catch (InterruptedException e) {
