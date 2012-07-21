@@ -12,6 +12,22 @@ public class main{
 	public static ServerPeer serverPeer = null;
 	public static PeerPostObject peerPost = null;
 	
+	public static void printDirectories(String currentDir, String indent) {
+		File folder = new File(currentDir);
+		File[] files = folder.listFiles();
+		for (File file : files) {
+			if (file.isFile()) {
+				String extesion = file.getName().substring(file.getName().lastIndexOf("."));
+				if (!extesion.equals(".torrent") && !extesion.startsWith(".part")) {
+					System.out.println(indent + file.getName());
+				}
+			} else {
+				System.out.println(indent + "/"+file.getName());
+				printDirectories(file.getPath(), indent + "  ");
+			}
+		}
+	}
+	
 	public static void versionCheck() {
 		versionCheck(Config.SHARE_PATH, "/");
 	}
@@ -129,9 +145,78 @@ public class main{
 			try{
 				System.out.print("> ");
 				input = br.readLine();
-				System.out.println("Message: " + input);
 				if(input != null && !input.equals("")){
-					if (input.startsWith("open")) {
+					if (input.startsWith("dir")) {
+						printDirectories(Config.SHARE_PATH, "");
+					} else if (input.startsWith("stable")) {
+						String [] file = input.split(" ");
+						if (file.length == 2) {
+							String relativePath = file[1];
+							if (relativePath.startsWith("/")) {
+								relativePath = relativePath.substring(1);
+							}
+							String absolutePath = Config.SHARE_PATH + relativePath;
+							File insertFile = new File(absolutePath);
+							if (insertFile.isFile()) {
+								String insertPath = relativePath + ".v1";
+								File fileInsert = new File(Config.SHARE_PATH + insertPath);
+								int count = 1;
+								while (fileInsert.exists()) {
+									count++;
+									insertPath = relativePath + ".v" + count;
+									fileInsert = new File(Config.SHARE_PATH + insertPath);
+								}
+								FilePostObject fileObject = null;
+								if (peerPost != null) {
+									String result = HttpRequest.postServer(Config.SERVER_FILE_INSERT, new FilePostObject(MD5Checksum.getMD5Checksum(absolutePath), "/"+insertPath));
+									fileObject = (FilePostObject)FileUtils.mapToObject(result, FilePostObject.class);
+									serverPeer.insert(absolutePath, fileObject.id, insertPath);
+								} else {
+									serverPeer.insert(absolutePath, 0, insertPath);
+								}
+							} else {
+								System.out.println("Warning: the path you specified is not a file");
+							}
+						} else {
+							System.out.println("Warning: you must have the file path as an argument");
+						}
+					} else if (input.startsWith("delete")) {
+						String [] file = input.split(" ");
+						if (file.length == 2) {
+							String relativePath = file[1];
+							if (relativePath.startsWith("/")) {
+								relativePath = relativePath.substring(1);
+							}
+							String absolutePath = Config.SHARE_PATH + relativePath;
+							File insertFile = new File(absolutePath);
+							if (insertFile.isFile()) {
+								if (peerPost != null) {
+									// ONLINE MODE
+									HttpRequest.postServer(Config.SERVER_STOP_SYNC, null);
+
+									// update the server for delete
+									HeaderFile torrent = FileUtils.readHeaderFile(new File(absolutePath+Config.HEADER_FILE_EXT));
+									FilePostObject fileObject = new FilePostObject(torrent.fileId);
+									String result = HttpRequest.postServer(Config.SERVER_FILE_DELETE, fileObject);
+									
+									// delete torrent file on other peers
+									serverPeer.broadCastAction(new Action(Action.ActionType.deleteFile, "/"+relativePath));
+									
+									// delete the torrent file on my system
+									FileUtils.deleteTorrentAndFiles(relativePath);
+									
+									HttpRequest.postServer(Config.SERVER_START_SYNC, null);
+								} else {
+									// OFFLINE MODE
+									
+								}
+							} else {
+								System.out.println("Warning: the path you specified is not a file");
+							}
+						} else {
+							System.out.println("Warning: you must have the file path as an argument");
+						}
+					} else if (input.startsWith("open")) {
 						String [] file = input.split(" ");
 						if (file.length != 2) {
 							System.out.println("Warning: you must specify the file name");

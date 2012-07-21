@@ -29,4 +29,5 @@ public class Config {
 	public static final String SERVER_CHECKSUM = "/file/checksum";
 	public static final String SERVER_CURRENT_ID = "/file/currentid";
 	public static final String SERVER_RETURN_PATH = "/file/returnpath";
+	public static final String SERVER_FILE_DELETE = "/file/delete";
 }

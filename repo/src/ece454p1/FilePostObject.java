@@ -40,6 +40,14 @@ public class FilePostObject {
 		this.path = null;
 	}
 	
+	public FilePostObject(int id) {
+		this.id = id;
+		this.timestamp = null;
+		this.checksum = null;
+		this.editing = null;
+		this.path = null;
+	}
+	
 	public FilePostObject(String checksum, String path) {
 		this.id = -1;
 		this.timestamp = null;
