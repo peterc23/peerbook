@@ -208,7 +208,8 @@ public class main{
 									HttpRequest.postServer(Config.SERVER_START_SYNC, null);
 								} else {
 									// OFFLINE MODE
-									
+									// delete the torrent file on my system
+									FileUtils.deleteTorrentAndFiles(relativePath);
 								}
 							} else {
 								System.out.println("Warning: the path you specified is not a file");
