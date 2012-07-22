@@ -67,7 +67,7 @@ function deleteFile(fileInfo, callback)
         callback(null);
         return;
     }else{
-        client.executeDeleteSingleQuery('DELETE * FROM ' + tableProperties.FILESYSTEM_TABLE  + ' WHERE ' +
+        client.executeDeleteSingleQuery('DELETE FROM ' + tableProperties.FILESYSTEM_TABLE  + ' WHERE ' +
             tableProperties.FILESYSTEM_ID + ' = ?', [fileInfo[tableProperties.FILESYSTEM_ID]], function(err) {
             callback(err);
         });
