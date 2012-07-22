@@ -63,7 +63,7 @@ function retrieveFileInfo(fileInfo, callback){
 
 function deleteFile(fileInfo, callback)
 {
-    if (fileInfo[tableProperties.FILESYSTEM_ID] == null || typeof eatAction[tableProperties.FILESYSTEM_ID] == 'undefined') {
+    if (fileInfo[tableProperties.FILESYSTEM_ID] == null || typeof fileInfo[tableProperties.FILESYSTEM_ID] == 'undefined') {
         callback(null);
         return;
     }else{
